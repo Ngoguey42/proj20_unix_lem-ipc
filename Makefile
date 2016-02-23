@@ -32,7 +32,7 @@ BUILD_MODE		= build
 ifeq ($(BUILD_MODE),test)
 	SRCS_DIRS		+= srcs_test
 	LD_FLAGS		+= -lboost_unit_test_framework
-	BASE_FLAGS		+=
+	BASE_FLAGS		+= -O2
 else ifeq ($(BUILD_MODE),debug)
 	SRCS_DIRS		+= srcs_build
 	BASE_FLAGS		+= -g
