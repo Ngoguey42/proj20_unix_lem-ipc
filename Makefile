@@ -19,7 +19,7 @@ O_DIR			:= obj
 # Default  flags / compilers
 BASE_FLAGS		= -Wall -Wextra
 HEAD_FLAGS		= $(addprefix -I,$(INCLUDE_DIRS))
-LD_FLAGS		= $(BASE_FLAGS) -Llibft -lft
+LD_FLAGS		= $(BASE_FLAGS) -Llibft -lft -o $@
 
 CC_LD			= $(CC_C)
 
@@ -79,10 +79,16 @@ else
 endif
 
 
+# ============================================================================ #
+HEAD_FLAGS := $(HEAD_FLAGS)
+C_FLAGS := $(C_FLAGS)
+CPP_FLAGS := $(CPP_FLAGS)
+
+CC_C := $(CC_C)
+CC_CPP := $(CC_CPP)
 
 # ============================================================================ #
 # Rules
-
 # Default rule (need to be before any include)
 all: _all1
 
@@ -99,7 +105,7 @@ _all3: $(NAME)
 
 # Linking
 $(NAME): $(LIBS_DEPEND) $(O_FILES)
-	$(CC_LD) -o $@ $(O_FILES) $(LD_FLAGS) && $(PRINT_LINK)
+	$(CC_LD) $(LD_FLAGS) $(O_FILES) && $(PRINT_LINK)
 
 # Compiling
 $(O_DIR)/%.o: %.c
@@ -128,8 +134,8 @@ fclean: clean
 re: fclean
 	$(MAKE) all
 
+
 # ============================================================================ #
 # Special targets
-
 .SILENT:
 .PHONY: all clean fclean re _all1 _all2 _all3
