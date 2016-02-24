@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:51:30 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 17:18:29 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 17:36:56 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,8 @@ int		main(int ac, char *av[])
 	qprintf("READ... HIT ENTER\n");
 	char c;
 	read(0, &c, 1);
+
+	if (li_res_quit(e))
+		return (ERROR(""));
 	return (0);
 }

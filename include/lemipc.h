@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 17:12:57 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 18:31:46 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,6 @@ t_env		*li_env(void);
 int			li_env_init(t_env e[1], int ac, char const * const *av);
 int			li_set_signals(t_env e[1]);
 int			li_res_retrieve(t_env e[1]);
+int			li_res_quit(t_env e[1]);
 
 #endif

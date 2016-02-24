@@ -6,13 +6,14 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 14:32:34 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 17:19:10 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 18:32:21 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lemipc.h"
 
 #include <errno.h>
+#include <signal.h>
 #include <sys/sem.h>
 
 /*
@@ -23,12 +24,11 @@
 ** V() == UP() == INCREMENT == RELEASE
 */
 
-#define SB_ARR(A,B,C) (struct sembuf[]){{.sem_num=(A),.sem_op=(B),.sem_flg=(C)}}
+#define _SEMBUFF_ARR(A,B,C) {.sem_num=(A),.sem_op=(B),.sem_flg=(C)}
+#define SEMBUFF_ARR(A,B,C) (struct sembuf[]){_SEMBUFF_ARR(A,B,C)}
 
-#define _DOWN(flg) SB_ARR(0, -1, flg)
-#define DOWN(e, flg) semop(e->res_semid, _DOWN(flg), 1)
-#define _UP(flg) SB_ARR(0, 1, flg)
-#define UP(e, flg) semop(e->res_semid, _UP(flg), 1)
+#define DOWN(e, flg) semop(e->res_semid, SEMBUFF_ARR(0, -1, flg), 1)
+#define UP(e, flg) semop(e->res_semid, SEMBUFF_ARR(0, 1, flg), 1)
 
 /*
 ** Called if ressources do not exist
@@ -74,13 +74,13 @@ static int		read_ressources(t_env e[1])
 	ft_printf(":yel:Ressources found, checking its initialization...:eoc:\n");
 	su.buf = &data;
 	if (semctl(e->res_semid, 0, IPC_STAT, su) < 0)
-		return (ERROR("semctl(..., IPC_STAT, ...)"));
+		return (ERRORNO("semctl(..., IPC_STAT, ...)"));
 	while (su.buf->sem_otime == 0)
 	{
 		ft_printf(":yel:Ressources found but not initialized, sleep...:eoc:\n");
 		(void)usleep(500000);
 		if (semctl(e->res_semid, 0, IPC_STAT, su) < 0)
-			return (ERROR("semctl(..., IPC_STAT, ...)"));
+			return (ERRORNO("semctl(..., IPC_STAT, ...)"));
 	}
 	ft_printf(":yel:Ressources found, up() for retreival...:eoc:\n");
 	if (DOWN(e, 0))
@@ -119,9 +119,6 @@ int				li_res_retrieve(t_env e[1])
 
 int				li_res_quit(t_env e[1])
 {
-	union semun_t		su;
-	struct semid_ds		data;
-
 	if (DOWN(e, 0))
 		return (ERRORNO("down()"));
 
