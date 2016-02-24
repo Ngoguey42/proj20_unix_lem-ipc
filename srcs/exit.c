@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 11:52:48 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 12:43:27 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 14:08:28 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+/*
+** IPCS status is fully unknown here
+*/
+
 
 static void handler(int signum)
 {
@@ -35,6 +40,7 @@ int		li_set_signals(t_env e[1])
 	if (sigemptyset(&sa->sa_mask))
 		return (ERROR("sigemptyset()"));
 	sa->sa_flags = SA_RESTART;
+	BREAK(e, 1);
 	if (sigaction(SIGINT, sa, NULL))
 		return (ERROR("sigaction(SIGINT, ...)"));
 	if (sigaction(SIGQUIT, sa, NULL))

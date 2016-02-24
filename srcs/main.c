@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:51:30 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 12:43:35 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 13:48:15 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ int		main(int ac, char *av[])
 	e = li_env();
 	if (e == NULL)
 		return (ERROR("li_env()"));
-	li_env_init(e);
+	if (li_env_init(e, ac, (char const *const *)av))
+		return (ERROR(""));
 	if (li_set_signals(e))
 		return (ERROR(""));
 
