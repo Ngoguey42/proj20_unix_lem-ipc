@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 14:09:56 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 14:16:39 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,16 @@
 # define LEMIPC_KEY_PATH "/tmp"
 # define LEMIPC_KEY_VAL 4224
 
-# define BREAK_MSG(v) ERRORF("Break with value (%d)", v)
-# define BREAK(e,v) do{if(e->brk==v){BREAK_MSG(v);while(1);}}while(0)
+/*
+** BREAK(e, v) macro is used to pause the process until read returns
+** useful to debug dead locks
+** Parameters:
+**		e	used to retreive current process brk identifier (./lemipc -b 42)
+**		v	brk identifier to compare with e->brk
+*/
+# define BREAK(e,v) do{if(e->brk==v){_BREAK_MSG(v);_BREAK_PAUSE;}}while(0)
+# define _BREAK_MSG(v) ERRORF("Break with value (%d), HIT ENTER !!!", v)
+# define _BREAK_PAUSE read(0, (char[1]){0}, 1)
 
 typedef struct s_env		t_env;
 

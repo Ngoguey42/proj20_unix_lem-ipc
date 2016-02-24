@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:51:30 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 13:48:15 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 14:13:21 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,12 @@ int		main(int ac, char *av[])
 		return (ERROR("li_env()"));
 	if (li_env_init(e, ac, (char const *const *)av))
 		return (ERROR(""));
+	BREAK(e, 1);
 	if (li_set_signals(e))
 		return (ERROR(""));
 
 
-	qprintf("READ...\n");
+	qprintf("READ... HIT ENTER\n");
 	char c;
 	read(0, &c, 1);
 	/* while (1); */
