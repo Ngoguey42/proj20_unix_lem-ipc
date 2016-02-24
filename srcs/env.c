@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 12:33:54 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 14:04:46 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 15:06:23 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	args(t_env e[1], t_arg_parser p[1])
 		{
 			awaiting = '\0';
 			e->brk = p->i;
-			ft_printf("BreakPoint set to (%d)\n", e->brk);
+			ft_printf("BreakVal set to (%d)\n", e->brk);
 		}
 		if (a == FTARG_OPTION)
 		{

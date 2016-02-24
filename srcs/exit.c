@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 11:52:48 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 14:12:31 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 16:22:00 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static void handler(int signum)
 
 	T;
 	qprintf("signum: %d\n", signum);
-
+	(void)e;
 	_exit(EXIT_FAILURE);
 }
 
@@ -36,6 +36,7 @@ int		li_set_signals(t_env e[1])
 {
 	struct sigaction	sa[1];
 
+	(void)e;
 	sa->sa_handler = handler;
 	if (sigemptyset(&sa->sa_mask))
 		return (ERROR("sigemptyset()"));

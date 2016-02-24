@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:51:30 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 14:13:21 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 15:19:21 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,34 +26,18 @@ int		main(int ac, char *av[])
 	if (e == NULL)
 		return (ERROR("li_env()"));
 	if (li_env_init(e, ac, (char const *const *)av))
-		return (ERROR(""));
-	BREAK(e, 1);
+		return (ERROR("li_env_init()"));
+	/* BREAK(e, 1); */
 	if (li_set_signals(e))
-		return (ERROR(""));
+		return (ERROR("li_set_signals()"));
+	if (li_res_retrieve(e))
+		return (ERROR("li_res_retrieve()"));
+	ft_printf(":gre:Ressources retrieval ok!:eoc:\n");
+	qprintf("key(%u) semgrp(%d)\n", e->key, e->res_semid);
 
 
 	qprintf("READ... HIT ENTER\n");
 	char c;
 	read(0, &c, 1);
-	/* while (1); */
-
-	return 0;
-
-	assert(ac > 1);
-	int const	id = ft_atoi(av[1]);
-
-	qprintf("id: (%d)\n", id);
-
-	e->key = ftok(LEMIPC_KEY_PATH, LEMIPC_KEY_VAL);
-
-	if (e->key == -1)
-		return (ERRORNO("ftok"));
-	e->semid = semget(e->key, 1, IPC_CREAT | SEM_A | SEM_R);
-
-	qprintf("key(%u) semgrp(%d)\n", e->key, e->semid);
-
-
-	while(1);
-	(void)ac;
 	return (0);
 }

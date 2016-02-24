@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 14:16:39 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 16:22:17 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,18 @@
 # include <assert.h> //deb
 # include "ft_debug.h" //deb
 
+/*
+** Needed for key_t
+*/
 # include <sys/ipc.h>
+
+/*
+** Needed for struct semid_ds
+*/
+# include <sys/sem.h>
+
+# include <unistd.h> //for breakpoints
+
 
 # define LEMIPC_KEY_PATH "/tmp"
 # define LEMIPC_KEY_VAL 4224
@@ -32,20 +43,28 @@
 **		v	brk identifier to compare with e->brk
 */
 # define BREAK(e,v) do{if(e->brk==v){_BREAK_MSG(v);_BREAK_PAUSE;}}while(0)
-# define _BREAK_MSG(v) ERRORF("Break with value (%d), HIT ENTER !!!", v)
+# define _BREAK_MSG(v) ERRORF("Pause with value (%d), HIT ENTER !!!", v)
 # define _BREAK_PAUSE read(0, (char[1]){0}, 1)
 
 typedef struct s_env		t_env;
 
+union semun_t
+{
+	int				val;	/* Valeur pour SETVAL */
+	struct semid_ds *buf;	/* Tampon pour IPC_STAT, IPC_SET */
+	unsigned short	*array;	/* Tableau pour GETALL, SETALL */
+};
+
 struct s_env
 {
 	key_t					key;
-	int						semid;
+	int						res_semid;
 	int						brk;
 };
 
 t_env		*li_env(void);
 int			li_env_init(t_env e[1], int ac, char const * const *av);
 int			li_set_signals(t_env e[1]);
+int			li_res_retrieve(t_env e[1]);
 
 #endif
