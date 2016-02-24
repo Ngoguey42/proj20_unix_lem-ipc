@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   res_sem.c                                          :+:      :+:    :+:   */
+/*   res_control.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/24 14:32:34 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 18:32:21 by ngoguey          ###   ########.fr       */
+/*   Created: 2016/02/24 18:49:43 by ngoguey           #+#    #+#             */
+/*   Updated: 2016/02/24 19:13:11 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <sys/sem.h>
+#include <sys/msg.h>
 
 /*
 ** res_sem (Ressources Semaphore) is used as a mutex for ressources
@@ -36,7 +37,7 @@
 **	2. Down semaphore
 */
 
-static int		make_ressources(t_env e[1])
+static int		make_and_keep_controls(t_env e[1])
 {
 	union semun_t		su;
 
@@ -44,6 +45,7 @@ static int		make_ressources(t_env e[1])
 	su.val = 1;
 	if (semctl(e->res_semid, 0, SETVAL, su) < 0)
 		return (ERRORNO("semctl(..., SETVAL, ...)"));
+
 	ft_printf(":yel:Ressources not found, up() for creation...:eoc:\n");
 	if (DOWN(e, IPC_NOWAIT))
 	{
@@ -52,7 +54,12 @@ static int		make_ressources(t_env e[1])
 		else
 			return (ERRORNO("down()"));
 	}
-
+	e->res_msqid = msgget(e->key, IPC_CREAT | IPC_EXCL | 0666);
+	if (e->res_msqid == -1)
+	{
+		UP(e, 0);
+		return (ERRORNO("msgget()"));
+	}
 	return (0);
 }
 
@@ -63,7 +70,7 @@ static int		make_ressources(t_env e[1])
 **	3. Down sepmaphore
 */
 
-static int		read_ressources(t_env e[1])
+static int		acquire_controls(t_env e[1])
 {
 	union semun_t		su;
 	struct semid_ds		data;
@@ -85,6 +92,12 @@ static int		read_ressources(t_env e[1])
 	ft_printf(":yel:Ressources found, up() for retreival...:eoc:\n");
 	if (DOWN(e, 0))
 		return (ERRORNO("down()"));
+	e->res_msqid = msgget(e->key, 0);
+	if (e->res_msqid == -1)
+	{
+		UP(e, 0);
+		return (ERRORNO("msgget()"));
+	}
 	return (0);
 }
 
@@ -92,25 +105,37 @@ static int		read_ressources(t_env e[1])
 ** Called at program start
 */
 
+static int		common_operations(t_env e[1])
+{
+	struct s_msg_pid const	m[1] = {{1, getpid()}};
+
+	if (msgsnd(e->res_msqid, m, sizeof(*m), IPC_NOWAIT))
+		return (ERRORNO("msgsnd()"));
+	return (0);
+}
+
 int				li_res_retrieve(t_env e[1])
 {
+	int		err;
+
 	e->res_semid = semget(e->key, 1, IPC_CREAT | IPC_EXCL | 0666);
 	if (e->res_semid == -1 && errno != EEXIST)
 		return (ERRORNO("semget(..., IPC_CREAT | IPC_EXCL, ...)"));
 	if (e->res_semid == -1)
 	{
-		if (read_ressources(e))
+		if (acquire_controls(e))
 			return (ERROR(""));
 	}
 	else
 	{
-		if (make_ressources(e))
+		if (make_and_keep_controls(e))
 			return (ERROR(""));
 	}
 	BREAK(e, 1);
+	err = common_operations(e);
 	if (UP(e, 0))
 		return (ERRORNO("up()"));
-	return (0);
+	return (err);
 }
 
 /*

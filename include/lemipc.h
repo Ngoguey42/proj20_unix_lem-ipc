@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 18:31:46 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 19:03:41 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,17 @@ union semun_t
 	unsigned short	*array;	/* Tableau pour GETALL, SETALL */
 };
 
+struct s_msg_pid
+{
+	long			mtype;
+	pid_t			pid;
+};
+
 struct s_env
 {
 	key_t					key;
 	int						res_semid;
+	int						res_msqid;
 	int						brk;
 };
 
