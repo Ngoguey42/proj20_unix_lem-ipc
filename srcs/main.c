@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:51:30 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 15:19:21 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 17:18:29 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ int		main(int ac, char *av[])
 
 	e = li_env();
 	if (e == NULL)
-		return (ERROR("li_env()"));
+		return (ERROR(""));
 	if (li_env_init(e, ac, (char const *const *)av))
-		return (ERROR("li_env_init()"));
+		return (ERROR(""));
 	/* BREAK(e, 1); */
 	if (li_set_signals(e))
-		return (ERROR("li_set_signals()"));
+		return (ERROR(""));
 	if (li_res_retrieve(e))
-		return (ERROR("li_res_retrieve()"));
+		return (ERROR(""));
 	ft_printf(":gre:Ressources retrieval ok!:eoc:\n");
 	qprintf("key(%u) semgrp(%d)\n", e->key, e->res_semid);
 

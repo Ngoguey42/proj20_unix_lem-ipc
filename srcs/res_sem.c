@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 14:32:34 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 16:36:55 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 17:19:10 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,30 +23,17 @@
 ** V() == UP() == INCREMENT == RELEASE
 */
 
-static int		down(t_env e[1], short flg)
-{
-	struct sembuf	op[1];
+#define SB_ARR(A,B,C) (struct sembuf[]){{.sem_num=(A),.sem_op=(B),.sem_flg=(C)}}
 
-	op->sem_num = 0;
-	op->sem_op = -1;
-	op->sem_flg = flg;
-	return (semop(e->res_semid, op, 1));
-}
-
-static int		up(t_env e[1], short flg)
-{
-	struct sembuf	op[1];
-
-	op->sem_num = 0;
-	op->sem_op = 1;
-	op->sem_flg = flg;
-	return (semop(e->res_semid, op, 1));
-}
+#define _DOWN(flg) SB_ARR(0, -1, flg)
+#define DOWN(e, flg) semop(e->res_semid, _DOWN(flg), 1)
+#define _UP(flg) SB_ARR(0, 1, flg)
+#define UP(e, flg) semop(e->res_semid, _UP(flg), 1)
 
 /*
 ** Called if ressources do not exist
 **	1. Set value to 1
-**	2. Down sepmaphore
+**	2. Down semaphore
 */
 
 static int		make_ressources(t_env e[1])
@@ -58,13 +45,14 @@ static int		make_ressources(t_env e[1])
 	if (semctl(e->res_semid, 0, SETVAL, su) < 0)
 		return (ERRORNO("semctl(..., SETVAL, ...)"));
 	ft_printf(":yel:Ressources not found, up() for creation...:eoc:\n");
-	if (down(e, IPC_NOWAIT))
+	if (DOWN(e, IPC_NOWAIT))
 	{
 		if (errno == EAGAIN)
 			return (ERROR("down(IPC_NOWAIT) should not have waited"));
 		else
 			return (ERRORNO("down()"));
 	}
+
 	return (0);
 }
 
@@ -95,16 +83,17 @@ static int		read_ressources(t_env e[1])
 			return (ERROR("semctl(..., IPC_STAT, ...)"));
 	}
 	ft_printf(":yel:Ressources found, up() for retreival...:eoc:\n");
-	if (down(e, 0))
+	if (DOWN(e, 0))
 		return (ERRORNO("down()"));
 	return (0);
 }
 
+/*
+** Called at program start
+*/
+
 int				li_res_retrieve(t_env e[1])
 {
-	e->key = ftok(LEMIPC_KEY_PATH, LEMIPC_KEY_VAL);
-	if (e->key == -1)
-		return (ERRORNO("ftok()"));
 	e->res_semid = semget(e->key, 1, IPC_CREAT | IPC_EXCL | 0666);
 	if (e->res_semid == -1 && errno != EEXIST)
 		return (ERRORNO("semget(..., IPC_CREAT | IPC_EXCL, ...)"));
@@ -119,7 +108,24 @@ int				li_res_retrieve(t_env e[1])
 			return (ERROR(""));
 	}
 	BREAK(e, 1);
-	if (up(e, 0))
+	if (UP(e, 0))
+		return (ERRORNO("up()"));
+	return (0);
+}
+
+/*
+** Called at program end
+*/
+
+int				li_res_quit(t_env e[1])
+{
+	union semun_t		su;
+	struct semid_ds		data;
+
+	if (DOWN(e, 0))
+		return (ERRORNO("down()"));
+
+	if (UP(e, 0))
 		return (ERRORNO("up()"));
 	return (0);
 }

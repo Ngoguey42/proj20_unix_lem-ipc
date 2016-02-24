@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 12:33:54 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 15:06:23 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 17:18:12 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@ int			li_env_init(t_env e[1], int ac, char const * const *av)
 	e->brk = -1;
 	if (args(e, (t_arg_parser[1]){ft_arg_create(ac, av)}))
 		return (1);
-
+	e->key = ftok(LEMIPC_KEY_PATH, LEMIPC_KEY_VAL);
+	if (e->key == -1)
+		return (ERRORNO("ftok()"));
 	return (0);
 }
