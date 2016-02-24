@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 18:49:43 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 19:13:11 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 19:43:10 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ static int		common_operations(t_env e[1])
 {
 	struct s_msg_pid const	m[1] = {{1, getpid()}};
 
-	if (msgsnd(e->res_msqid, m, sizeof(*m), IPC_NOWAIT))
+	if (msgsnd(e->res_msqid, m, sizeof(pid_t), IPC_NOWAIT))
 		return (ERRORNO("msgsnd()"));
 	return (0);
 }
@@ -142,12 +142,18 @@ int				li_res_retrieve(t_env e[1])
 ** Called at program end
 */
 
+/* ssize_t msgrcv(int msqid, void *msgp, size_t msgsz, long msgtyp, */
+/* 			   int msgflg); */
+
 int				li_res_quit(t_env e[1])
 {
+	int					count[1];
+	int					err;
+
 	if (DOWN(e, 0))
 		return (ERRORNO("down()"));
-
+	err = li_res_resend_msq(e, count);
 	if (UP(e, 0))
 		return (ERRORNO("up()"));
-	return (0);
+	return (err);
 }
