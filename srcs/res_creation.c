@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   res_control.c                                      :+:      :+:    :+:   */
+/*   res_creation.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/24 18:49:43 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 19:43:10 by ngoguey          ###   ########.fr       */
+/*   Created: 2016/02/24 20:09:04 by ngoguey           #+#    #+#             */
+/*   Updated: 2016/02/24 20:09:04 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ static int		make_and_keep_controls(t_env e[1])
 	su.val = 1;
 	if (semctl(e->res_semid, 0, SETVAL, su) < 0)
 		return (ERRORNO("semctl(..., SETVAL, ...)"));
-
 	ft_printf(":yel:Ressources not found, up() for creation...:eoc:\n");
 	if (DOWN(e, IPC_NOWAIT))
 	{
@@ -94,16 +93,9 @@ static int		acquire_controls(t_env e[1])
 		return (ERRORNO("down()"));
 	e->res_msqid = msgget(e->key, 0);
 	if (e->res_msqid == -1)
-	{
-		UP(e, 0);
-		return (ERRORNO("msgget()"));
-	}
+		return (UP(e, 0) + ERRORNO("msgget()"));
 	return (0);
 }
-
-/*
-** Called at program start
-*/
 
 static int		common_operations(t_env e[1])
 {
@@ -113,6 +105,10 @@ static int		common_operations(t_env e[1])
 		return (ERRORNO("msgsnd()"));
 	return (0);
 }
+
+/*
+** Called at program start
+*/
 
 int				li_res_retrieve(t_env e[1])
 {
@@ -142,9 +138,6 @@ int				li_res_retrieve(t_env e[1])
 ** Called at program end
 */
 
-/* ssize_t msgrcv(int msqid, void *msgp, size_t msgsz, long msgtyp, */
-/* 			   int msgflg); */
-
 int				li_res_quit(t_env e[1])
 {
 	int					count[1];
@@ -153,6 +146,9 @@ int				li_res_quit(t_env e[1])
 	if (DOWN(e, 0))
 		return (ERRORNO("down()"));
 	err = li_res_resend_msq(e, count);
+	if (*count == 0)
+	{
+	}
 	if (UP(e, 0))
 		return (ERRORNO("up()"));
 	return (err);

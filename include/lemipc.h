@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 19:03:41 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 20:09:52 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ typedef struct s_env		t_env;
 
 union semun_t
 {
-	int				val;	/* Valeur pour SETVAL */
-	struct semid_ds *buf;	/* Tampon pour IPC_STAT, IPC_SET */
-	unsigned short	*array;	/* Tableau pour GETALL, SETALL */
+	int				val;
+	struct semid_ds	*buf;
+	unsigned short	*array;
 };
 
 struct s_msg_pid
@@ -63,16 +63,20 @@ struct s_msg_pid
 
 struct s_env
 {
-	key_t					key;
-	int						res_semid;
-	int						res_msqid;
-	int						brk;
+	key_t			key;
+	int				res_semid;
+	int				res_msqid;
+	int				brk;
 };
 
 t_env		*li_env(void);
 int			li_env_init(t_env e[1], int ac, char const * const *av);
+
 int			li_set_signals(t_env e[1]);
+
 int			li_res_retrieve(t_env e[1]);
+int			li_res_resend_msq(t_env e[1], int count[1]);
+
 int			li_res_quit(t_env e[1]);
 
 #endif
