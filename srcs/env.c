@@ -1,39 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lemipc.h                                           :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 12:40:37 by ngoguey          ###   ########.fr       */
+/*   Created: 2016/02/24 12:33:54 by ngoguey           #+#    #+#             */
+/*   Updated: 2016/02/24 12:41:28 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LEMIPC_H
-# define LEMIPC_H
+#include "lemipc.h"
 
-# include "libft.h"
+#include <stdlib.h>
 
-# include "fterror.h"
-# include <assert.h> //deb
-# include "ft_debug.h" //deb
-
-# include <sys/ipc.h>
-
-# define LEMIPC_KEY_PATH "/tmp"
-# define LEMIPC_KEY_VAL 4224
-
-typedef struct s_env		t_env;
-
-struct s_env
+t_env	*li_env(void)
 {
-	key_t					key;
-	int						semid;
-};
+	static t_env	*e = NULL;
 
-t_env		*li_env(void);
-int			li_env_init(t_env e[1]);
-int			li_set_signals(t_env e[1]);
+	if (e == NULL)
+		e = malloc(sizeof(*e));
+	return (e);
+}
 
-#endif
+
+int		li_env_init(t_env e[1])
+{
+	ft_bzero(e, sizeof(*e));
+
+	return (0);
+}

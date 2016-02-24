@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:51:30 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/23 17:57:54 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/24 12:43:35 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,27 @@
 #include <sys/sem.h>
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-int							main(int ac, char *av[])
+int		main(int ac, char *av[])
 {
-	t_env	e[1];
+	t_env	*e;
 
+	e = li_env();
+	if (e == NULL)
+		return (ERROR("li_env()"));
+	li_env_init(e);
+	if (li_set_signals(e))
+		return (ERROR(""));
+
+
+	qprintf("READ...\n");
+	char c;
+	read(0, &c, 1);
+	/* while (1); */
+
+	return 0;
 
 	assert(ac > 1);
 	int const	id = ft_atoi(av[1]);
