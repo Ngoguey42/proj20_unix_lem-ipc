@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 20:09:12 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 11:52:43 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 19:54:38 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static bool		sendable(struct s_msg_pid const buf[1])
 static int		send(
 	t_env e[1], struct s_msg_pid buf[1], long sndtype, int count[1])
 {
-	qprintf("\tResending\n");
+	/* qprintf("\tResending\n"); */
 	(*count)++;
 	buf->mtype = sndtype;
 	if (msgsnd(e->msqid_pids, buf, sizeof(pid_t), IPC_NOWAIT))
@@ -47,8 +47,8 @@ int				li_res_resend_msq(t_env e[1], int count[1])
 		return (ERRORNO("msgrcv()"));
 	rcvtype = m->mtype;
 	*count = 0;
-	qprintf("Dealing with pid=%d (self = %d) type=%d\n",
-			m->pid, getpid(), m->mtype);
+	/* qprintf("Dealing with pid=%d (self = %d) type=%d\n", */
+			/* m->pid, getpid(), m->mtype); */
 	if (sendable(m))
 		if (send(e, m, rcvtype + 1, count))
 			return (ERROR(""));
@@ -59,8 +59,8 @@ int				li_res_resend_msq(t_env e[1], int count[1])
 			break ;
 		if (err == -1)
 			return (ERRORNO("msgrcv()"));
-		qprintf("Dealing with pid=%d (self = %d) type=%d\n",
-				m->pid, getpid(), m->mtype);
+		/* qprintf("Dealing with pid=%d (self = %d) type=%d\n", */
+		/* 		m->pid, getpid(), m->mtype); */
 		if (sendable(m))
 			if (send(e, m, rcvtype + 1, count))
 				return (ERROR(""));

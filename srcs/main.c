@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:51:30 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 16:42:31 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 19:45:27 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 int		main(int ac, char *av[])
 {
 	t_env	*e;
 
+	srand(time(NULL));
 	e = li_env();
 	if (e == NULL)
 		return (ERROR(""));

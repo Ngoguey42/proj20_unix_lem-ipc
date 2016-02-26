@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 18:08:03 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 19:41:43 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,9 +142,10 @@ struct s_env
 	int				semid_game;
 	int				shmid_board;
 	int				*shm_board;
-	t_ftvector		vec_msqids_foe;
-	t_ftvector		vec_msqids_ally;
+	/* t_ftvector		vec_msqids_foe; */
+	/* t_ftvector		vec_msqids_ally; */
 
+	t_vec2i			pos;
 	int				team_id; //TODO: tid param or random / check consistency
 	bool			leave_game;
 };
