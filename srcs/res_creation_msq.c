@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 20:09:12 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 20:09:38 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 11:52:43 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int		send(
 	qprintf("\tResending\n");
 	(*count)++;
 	buf->mtype = sndtype;
-	if (msgsnd(e->res_msqid, buf, sizeof(pid_t), IPC_NOWAIT))
+	if (msgsnd(e->msqid_pids, buf, sizeof(pid_t), IPC_NOWAIT))
 		return (ERRORNO("msgsnd()"));
 	return (0);
 }
@@ -43,7 +43,7 @@ int				li_res_resend_msq(t_env e[1], int count[1])
 	struct s_msg_pid	m[1];
 	int					err;
 
-	if (msgrcv(e->res_msqid, m, sizeof(pid_t), 0, IPC_NOWAIT) < 0)
+	if (msgrcv(e->msqid_pids, m, sizeof(pid_t), 0, IPC_NOWAIT) < 0)
 		return (ERRORNO("msgrcv()"));
 	rcvtype = m->mtype;
 	*count = 0;
@@ -54,7 +54,7 @@ int				li_res_resend_msq(t_env e[1], int count[1])
 			return (ERROR(""));
 	while (1)
 	{
-		err = msgrcv(e->res_msqid, m, sizeof(pid_t), rcvtype, IPC_NOWAIT);
+		err = msgrcv(e->msqid_pids, m, sizeof(pid_t), rcvtype, IPC_NOWAIT);
 		if (err == -1 && (errno == ENOMSG || errno == EAGAIN))
 			break ;
 		if (err == -1)

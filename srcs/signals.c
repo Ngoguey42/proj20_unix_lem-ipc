@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/24 11:52:48 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/24 16:22:00 by ngoguey          ###   ########.fr       */
+/*   Created: 2016/02/26 12:03:40 by ngoguey           #+#    #+#             */
+/*   Updated: 2016/02/26 12:03:50 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-/*
-** IPCS status is fully unknown here
-*/
-
-
 static void handler(int signum)
 {
 	t_env *const	e = li_env();
 
-
-	T;
 	qprintf("signum: %d\n", signum);
-	(void)e;
-	_exit(EXIT_FAILURE);
+	e->leave_game = true;
+	_exit(EXIT_FAILURE); //TODO : remove
+	return ;
 }
 
 int		li_set_signals(t_env e[1])
@@ -46,8 +40,5 @@ int		li_set_signals(t_env e[1])
 		return (ERROR("sigaction(SIGINT, ...)"));
 	if (sigaction(SIGQUIT, sa, NULL))
 		return (ERROR("sigaction(SIGQUIT, ...)"));
-
-
-
 	return (0);
 }
