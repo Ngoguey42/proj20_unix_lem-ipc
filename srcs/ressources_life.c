@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:16:27 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 12:37:23 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 14:25:13 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,21 +47,21 @@ static int		shared_operations(t_env e[1])
 int				li_res_spawn_or_read(t_env e[1])
 {
 	int			err;
-	key_t const	key = ftok(LEMIPC_KEY_PATH, LEMIPC_KEY_VAL);
 
-	if (key == -1)
+	e->key = ftok(LEMIPC_KEY_PATH, LEMIPC_KEY_VAL);
+	if (e->key == -1)
 		return (ERRORNO("ftok()"));
-	e->semid_reslife = semget(key, 1, IPC_CREAT | IPC_EXCL | 0666);
+	e->semid_reslife = semget(e->key, 1, IPC_CREAT | IPC_EXCL | 0666);
 	if (e->semid_reslife == -1 && errno != EEXIST)
 		return (ERRORNO("semget(..., IPC_CREAT | IPC_EXCL, ...)"));
 	if (e->semid_reslife == -1)
 	{
-		if (li_res_read_keeplock(e, key))
+		if (li_res_read_keeplock(e))
 			return (ERROR(""));
 	}
 	else
 	{
-		if (li_res_spawn_keeplock(e, key))
+		if (li_res_spawn_keeplock(e))
 			return (ERROR(""));
 	}
 	BREAK(e, 1);

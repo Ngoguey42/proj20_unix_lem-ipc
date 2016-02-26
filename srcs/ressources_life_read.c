@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:10:27 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 12:44:35 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 14:27:22 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,12 @@
 **	3. Down sepmaphore
 */
 
-int			li_res_read_keeplock(t_env e[1], key_t key)
+int			li_res_read_keeplock(t_env e[1])
 {
 	union semun_t		su;
 	struct semid_ds		data;
 
-	e->semid_reslife = semget(key, 0, 0);
+	e->semid_reslife = semget(e->key, 0, 0);
 	if (e->semid_reslife == -1)
 		return (ERRORNO("semget()"));
 	ft_printf(":yel:Ressources found, checking its initialization...:eoc:\n");
@@ -61,7 +61,7 @@ int			li_res_read_keeplock(t_env e[1], key_t key)
 	ft_printf(":yel:Ressources found, up() for retreival...:eoc:\n");
 	if (DOWN(e, 0))
 		return (ERRORNO("down()"));
-	e->msqid_pids = msgget(key, 0);
+	e->msqid_pids = msgget(e->key, 0);
 	if (e->msqid_pids == -1)
 		return (UP(e, 0) + ERRORNO("msgget()"));
 	return (0);

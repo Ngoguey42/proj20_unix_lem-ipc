@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:10:25 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 12:49:35 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 14:33:04 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,41 +38,35 @@
 **	2. Down semaphore
 */
 
-static int	spawn_phase3(t_env e[1], key_t key)
-{
-	e->shmid_nteam = shmget(key, sizeof(bool), IPC_CREAT | IPC_EXCL);
-	if (e->shmid_nteam == -1)
-		return (ERRORNO("shmget()"));
-	ft_printf("\t:yel:e->shmid_nteam spawned:eoc:\n");
-	if (0)
-	{
-		if (shmctl(e->shmid_nteam, IPC_RMID, NULL))
-			ERRORNO("shmctl()");
-		return (ERROR(""));
-	}
-	(void)e;
-	(void)key;
-	return (0);
-}
+static int (*const g_spawn_seq[])() = {
+	&li_msq_pids_spawn,
+	&li_shm_nteam_spawn,
+};
 
-static int	spawn_phase2(t_env e[1], key_t key)
-{
-	e->msqid_pids = msgget(key, IPC_CREAT | IPC_EXCL | 0666);
-	if (e->msqid_pids == -1)
-		return (ERRORNO("msgget()"));
-	ft_printf("\t:yel:e->msqid_pids spawned:eoc:\n");
-	if (spawn_phase3(e, key))
-	{
-		if (msgctl(e->msqid_pids, IPC_RMID, NULL))
-			ERRORNO("msgctl()");
-		return (ERROR(""));
-	}
-	return (0);
-}
+static int (*const g_destroy_seq[])() = {
+	&li_msq_pids_destroy,
+	&li_shm_nteam_destroy,
+};
 
-int			li_res_spawn_keeplock(t_env e[1], key_t key)
+static int (*const g_read_seq[])() = {
+	&li_msq_pids_read,
+	&li_shm_nteam_read,
+};
+
+# define ASSERT1 (SIZE_ARRAY(g_spawn_seq) == SIZE_ARRAY(g_destroy_seq))
+static char			g_assert1[1 - (ASSERT1 ? 0 : 1) * 2];
+# define ASSERT2 (SIZE_ARRAY(g_spawn_seq) == SIZE_ARRAY(g_read_seq))
+static char			g_assert2[1 - (ASSERT2 ? 0 : 1) * 2];
+# define ASSERT3 (SIZE_ARRAY(g_spawn_seq) > 0)
+static char			g_assert3[1 - (ASSERT3 ? 0 : 1) * 2];
+
+# define NFUN SIZE_ARRAY(g_spawn_seq)
+# define BOUNDS (size_t const[2]){0, NFUN - 1}
+
+int			li_res_spawn_keeplock(t_env e[1])
 {
 	union semun_t		su;
+	size_t				faulty_index[1];
 
 	BREAK(e, 1);
 	su.val = 1;
@@ -87,10 +81,14 @@ int			li_res_spawn_keeplock(t_env e[1], key_t key)
 		else
 			return (ERRORNO("down()"));
 	}
-	if (spawn_phase2(e, key))
+	if (ft_call_sequence(g_spawn_seq, BOUNDS, faulty_index, e))
 	{
-		UP(e, 0);
+		ft_call_sequence(g_destroy_seq, (size_t const[2]){*faulty_index, 0},
+						 faulty_index, e);
 		return (ERROR(""));
 	}
+	(void)g_assert1;
+	(void)g_assert2;
+	(void)g_assert3;
 	return (0);
 }
