@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 14:52:45 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 16:40:52 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:51:53 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,10 @@ int		li_shm_gameinfo_spawn(t_env e[1])
 {
 	struct s_shm_gameinfo	*map;
 
+	if (e->param_nteam == -1)
+		return (ERROR("nteam was not set in program parameters"));
+	if (e->param_wboard == -1)
+		return (ERROR("wboard was not set in program parameters"));
 	e->shmid_gameinfo = shmget(
 		e->key, sizeof(struct s_shm_gameinfo), IPC_CREAT | IPC_EXCL | 0666);
 	if (e->shmid_gameinfo == -1)
@@ -33,6 +37,7 @@ int		li_shm_gameinfo_spawn(t_env e[1])
 		return (1);
 	}
 	map->nteam = e->param_nteam;
+	map->wboard = e->param_wboard;
 	(void)shmdt(map);
 	ft_printf("\t:yel:e->shmid_gameinfo spawned and set:eoc:\n");
 	return (0);
@@ -60,8 +65,15 @@ int		li_shm_gameinfo_read(t_env e[1])
 	if (e->param_nteam == -1)
 		e->param_nteam = map->nteam;
 	else if (map->nteam != e->param_nteam)
-		return (ERRORF("e->param_nteam does not match shm_gameinfo "
-					   "(%d vs %d)", e->param_nteam, map->nteam));
+		return (ERRORF(
+			"e->param_nteam does not match shm_gameinfo (%d vs %d)",
+			e->param_nteam, map->nteam));
+	if (e->param_wboard == -1)
+		e->param_wboard = map->wboard;
+	else if (map->wboard != e->param_wboard)
+		return (ERRORF(
+			"e->param_wboard does not match shm_gameinfo (%d vs %d)",
+			e->param_wboard, map->wboard));
 	(void)shmdt(map);
 	ft_printf("\t:yel:e->shmid_gameinfo read and valid:eoc:\n");
 	return (0);

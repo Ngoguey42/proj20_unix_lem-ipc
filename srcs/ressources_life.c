@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:16:27 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 16:38:13 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 17:29:30 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,11 @@ static int		spawn_seq(t_env e[1])
 	if (ft_call_sequence(g_spawn_seq, BOUNDS, faulty_index, e))
 	{
 		ERRORF("Spawn sequence failed at step %d", *faulty_index);
-		ft_call_sequence(g_destroy_seq, (size_t const[2]){*faulty_index, 0},
-						faulty_index, e);
+		if (*faulty_index > 0)
+			ft_call_sequence(
+				g_destroy_seq,
+				(size_t const[2]){*faulty_index - 1, 0},
+				faulty_index, e);
 		return (1);
 	}
 	(void)g_assert1;
@@ -86,6 +89,7 @@ static int		read_seq(t_env e[1])
 	if (ft_call_sequence(g_read_seq, BOUNDS, faulty_index, e))
 	{
 		ERRORF("Read sequence failed at step %d", *faulty_index);
+		(void)UP(e, 0);
 		return (1);
 	}
 	return (0);
@@ -137,6 +141,7 @@ int				li_res_destroy_or_defect(t_env e[1])
 	}
 	else if (*count == 0)
 	{
+		ft_printf(":YEL::bla:No more processes, destroying ressources:eof:\n");
 		ft_call_sequence(
 			g_destroy_seq, (size_t const[2]){SEQ_NFUNC - 1, 0}, NULL, e);
 	}

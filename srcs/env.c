@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 12:33:54 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 16:35:42 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:50:25 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,12 @@ static int	handle_option(
 		*awaiting = 'c';
 		return (0);
 	}
+	else if (p->c == 'w')
+	{
+		*expect = FTARG_INT;
+		*awaiting = 'w';
+		return (0);
+	}
 	(void)e;
 	return (1);
 }
@@ -52,14 +58,21 @@ static int	handle_awaited(t_env e[1], t_arg_parser p[1], char awaiting[1])
 	if (*awaiting == 'b')
 	{
 		e->param_brk = p->i;
-		ft_printf("BreakVal set to (%d)\n", e->param_brk);
+		ft_printf("Break val parameter = %d\n", e->param_brk);
 	}
 	else if (*awaiting == 'c')
 	{
 		if (p->i < 2)
-			return (ERROR("Num Teams too low"));
+			return (ERROR("Num team too low"));
 		e->param_nteam = p->i;
-		ft_printf("Num Team set to (%d)\n", e->param_nteam);
+		ft_printf("Num team parameter = %d\n", e->param_nteam);
+	}
+	else if (*awaiting == 'w')
+	{
+		if (p->i < 4)
+			return (ERROR("Board size too low"));
+		e->param_wboard = p->i;
+		ft_printf("Board size parameter = %d\n", e->param_nteam);
 	}
 	return (0);
 }
@@ -97,6 +110,7 @@ int			li_env_init(t_env e[1], int ac, char const *const *av)
 	ft_bzero(e, sizeof(*e));
 	e->param_brk = -1;
 	e->param_nteam = -1;
+	e->param_wboard = -1;
 	if (args(e, (t_arg_parser[1]){ft_arg_create(ac, av)}))
 		return (1);
 	return (0);

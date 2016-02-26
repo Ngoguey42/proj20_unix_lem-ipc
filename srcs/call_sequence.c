@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 13:49:38 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 16:27:18 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:58:35 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,15 @@ int			ft_call_sequence(
 	i = bounds[0];
 	while (1)
 	{
-		err = seqs[i](ext);
-		if (err != 0)
+		if (seqs[i] != NULL)
 		{
-			if (faulty_index != NULL)
-				*faulty_index = i;
-			return (err);
+			err = seqs[i](ext);
+			if (err != 0)
+			{
+				if (faulty_index != NULL)
+					*faulty_index = i;
+				return (err);
+			}
 		}
 		if (i == (int)bounds[1])
 			break ;

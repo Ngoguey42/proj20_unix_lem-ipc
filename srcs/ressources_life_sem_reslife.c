@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 15:28:17 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 16:27:41 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 17:28:54 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int		li_sem_reslife_spawn(t_env e[1])
 
 	BREAK(e, 1);
 	su.val = 1;
-	ft_printf(":yel:Ressources not found, spawning them:eoc:\n");
+	ft_printf(":YEL::bla:Ressources not found, spawning them:eof:\n");
 	if (semctl(e->semid_reslife, 0, SETVAL, su) < 0)
 		return (ERRORNO("semctl(..., SETVAL, ...)"));
 	ft_printf("\t:yel:e->semid_reslife spawned & set (acquiring lock):eoc:\n");
