@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:10:27 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 12:12:38 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 12:44:35 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <signal.h>
 #include <sys/sem.h>
 #include <sys/msg.h>
+#include <sys/shm.h>
 
 /*
 ** res_sem (Ressources Semaphore) is used as a mutex for ressources
@@ -38,7 +39,7 @@
 **	3. Down sepmaphore
 */
 
-int			li_res_read(t_env e[1], key_t key)
+int			li_res_read_keeplock(t_env e[1], key_t key)
 {
 	union semun_t		su;
 	struct semid_ds		data;

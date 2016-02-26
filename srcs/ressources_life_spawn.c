@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:10:25 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 12:12:19 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 12:49:35 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <signal.h>
 #include <sys/sem.h>
 #include <sys/msg.h>
+#include <sys/shm.h>
 
 /*
 ** res_sem (Ressources Semaphore) is used as a mutex for ressources
@@ -37,15 +38,48 @@
 **	2. Down semaphore
 */
 
-int			li_res_spawn(t_env e[1], key_t key)
+static int	spawn_phase3(t_env e[1], key_t key)
+{
+	e->shmid_nteam = shmget(key, sizeof(bool), IPC_CREAT | IPC_EXCL);
+	if (e->shmid_nteam == -1)
+		return (ERRORNO("shmget()"));
+	ft_printf("\t:yel:e->shmid_nteam spawned:eoc:\n");
+	if (0)
+	{
+		if (shmctl(e->shmid_nteam, IPC_RMID, NULL))
+			ERRORNO("shmctl()");
+		return (ERROR(""));
+	}
+	(void)e;
+	(void)key;
+	return (0);
+}
+
+static int	spawn_phase2(t_env e[1], key_t key)
+{
+	e->msqid_pids = msgget(key, IPC_CREAT | IPC_EXCL | 0666);
+	if (e->msqid_pids == -1)
+		return (ERRORNO("msgget()"));
+	ft_printf("\t:yel:e->msqid_pids spawned:eoc:\n");
+	if (spawn_phase3(e, key))
+	{
+		if (msgctl(e->msqid_pids, IPC_RMID, NULL))
+			ERRORNO("msgctl()");
+		return (ERROR(""));
+	}
+	return (0);
+}
+
+int			li_res_spawn_keeplock(t_env e[1], key_t key)
 {
 	union semun_t		su;
 
 	BREAK(e, 1);
 	su.val = 1;
+	ft_printf(":yel:Ressources not found, spawning them:eoc:\n");
 	if (semctl(e->semid_reslife, 0, SETVAL, su) < 0)
 		return (ERRORNO("semctl(..., SETVAL, ...)"));
-	ft_printf(":yel:Ressources not found, up() for creation...:eoc:\n");
+	ft_printf("\t:yel:e->semid_reslife spawned (acquiring lock):eoc:\n");
 	if (DOWN(e, IPC_NOWAIT))
 	{
 		if (errno == EAGAIN)
@@ -53,11 +87,10 @@ int			li_res_spawn(t_env e[1], key_t key)
 		else
 			return (ERRORNO("down()"));
 	}
-	e->msqid_pids = msgget(key, IPC_CREAT | IPC_EXCL | 0666);
-	if (e->msqid_pids == -1)
+	if (spawn_phase2(e, key))
 	{
 		UP(e, 0);
-		return (ERRORNO("msgget()"));
+		return (ERROR(""));
 	}
 	return (0);
 }

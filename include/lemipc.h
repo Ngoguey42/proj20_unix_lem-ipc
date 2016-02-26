@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 12:12:29 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 12:37:32 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,8 @@ int			li_env_init(t_env e[1], int ac, char const * const *av);
 int			li_set_signals(t_env e[1]);
 
 int			li_res_spawn_or_read(t_env e[1]);
-int			li_res_spawn(t_env e[1], key_t k);
-int			li_res_read(t_env e[1], key_t k);
+int			li_res_spawn_keeplock(t_env e[1], key_t k);
+int			li_res_read_keeplock(t_env e[1], key_t k);
 
 int			li_res_destroy_or_defect(t_env e[1]);
 int			li_res_resend_msq(t_env e[1], int count[1]);
