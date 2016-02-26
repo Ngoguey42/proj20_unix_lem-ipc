@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 19:41:43 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 20:07:13 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,6 +193,8 @@ int			li_shm_board_read(t_env e[1]);
 /*
 ** Game Phase
 */
+int			li_game_down(t_env e[1]);
+int			li_game_up(t_env e[1]);
 
 /*
 ** Exit Phase

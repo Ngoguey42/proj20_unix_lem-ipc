@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:16:27 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 18:07:54 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 20:38:56 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 
 #define DOWN(e, flg) semop(e->semid_reslife, SEMBUFF_ARR(0, -1, flg), 1)
 #define UP(e, flg) semop(e->semid_reslife, SEMBUFF_ARR(0, 1, flg), 1)
+// TODO: secure DOWN and UP for Syscalls
 
 static int (*const g_spawn_seq[])() = {
 	&li_sem_reslife_spawn,
@@ -126,8 +127,8 @@ int				li_res_spawn_or_read(t_env e[1])
 		if (spawn_seq(e))
 			return (ERROR(""));
 	}
-	WARNF("Waiting before lock release");
-	BREAK(e, 1);
+	/* WARNF("Waiting before lock release"); */
+	/* BREAK(e, 1); */
 	if (UP(e, 0))
 		return (ERRORNO("up()"));
 	return (0);
@@ -154,7 +155,9 @@ int				li_res_destroy_or_defect(t_env e[1])
 		ft_call_sequence(
 			g_destroy_seq, (size_t const[2]){SEQ_NFUNC - 1, 0}, NULL, e);
 	}
-	else {
+	else
+	{
+		ft_printf(":yel:%d more processe(s) running:eof:\n", *count);
 		if (UP(e, 0))
 			return (ERRORNO("up()"));
 	}

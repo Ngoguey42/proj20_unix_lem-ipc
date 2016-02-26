@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:03:40 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 12:03:50 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 20:01:23 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void handler(int signum)
 
 	qprintf("signum: %d\n", signum);
 	e->leave_game = true;
-	_exit(EXIT_FAILURE); //TODO : remove
+	/* _exit(EXIT_FAILURE); //TODO : remove */
 	return ;
 }
 

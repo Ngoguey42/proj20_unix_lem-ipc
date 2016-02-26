@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 17:57:41 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 19:54:10 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 20:25:20 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,26 @@
 #include <time.h>
 #include <stdlib.h>
 
-static int	rejoin(t_env e[1], int ncells)
+static int	count_cells_left(t_env e[1], int ncells)
 {
-	int		cells_left;
-	int		i;
-	int		seed;
-	int		j;
+	int			i;
+	int			cells_left;
 
 	cells_left = 0;
 	i = 0;
 	while (i < ncells)
 		if (e->shm_board[i++] == -1)
 			cells_left++;
+	return (cells_left);
+}
+
+static int	rejoin(t_env e[1], int ncells)
+{
+	int const	cells_left = count_cells_left(e, ncells);
+	int			i;
+	int			seed;
+	int			j;
+
 	if (cells_left == 0)
 		return (ERROR("Board is full"));
 	seed = rand() % cells_left;
@@ -93,8 +101,17 @@ int		li_shm_board_read(t_env e[1])
 	e->shm_board = shmat(e->shmid_board, NULL, 0);
 	if (e->shm_board == (void*)-1)
 		return (ERRORNOF("shmat()"));
-	if (rejoin(e, nbytes / sizeof(int)))
+	if (li_game_down(e))
 		return (ERROR(""));
+	if (rejoin(e, nbytes / sizeof(int)))
+	{
+		ERROR("");
+		if (li_game_up(e))
+			WARNF("");
+		return (1);
+	}
+	if (li_game_up(e))
+		WARNF("");
 	ft_printf("\t:yel:e->shmid_board read, mapped and rejoined"
 			  "at pos {%d, %d}:eoc:\n", e->pos.x, e->pos.y);
 	return (0);
