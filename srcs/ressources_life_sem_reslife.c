@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 15:28:17 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 17:28:54 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 17:44:33 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 #include <errno.h>
 #include <signal.h>
-#include <sys/shm.h>
+#include <sys/sem.h>
 
 /*
 ** res_sem (Ressources Semaphore) is used as a mutex for ressources

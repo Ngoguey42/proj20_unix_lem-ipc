@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:16:27 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 17:29:30 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 17:56:22 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,21 @@ static int (*const g_spawn_seq[])() = {
 	&li_sem_reslife_spawn,
 	&li_msq_pids_spawn,
 	&li_shm_gameinfo_spawn,
+	&li_sem_game_spawn,
 };
 
 static int (*const g_destroy_seq[])() = {
 	&li_sem_reslife_destroy,
 	&li_msq_pids_destroy,
 	&li_shm_gameinfo_destroy,
+	&li_sem_game_destroy,
 };
 
 static int (*const g_read_seq[])() = {
 	&li_sem_reslife_read,
 	&li_msq_pids_read,
 	&li_shm_gameinfo_read,
+	&li_sem_game_read,
 };
 
 #define ASSERT1 (SEQ_NFUNC == SIZE_ARRAY(g_destroy_seq))
@@ -103,6 +106,9 @@ int				li_res_spawn_or_read(t_env e[1])
 {
 	e->key = ftok(LEMIPC_KEY_PATH, LEMIPC_KEY_VAL);
 	if (e->key == -1)
+		return (ERRORNO("ftok()"));
+	e->keygame = ftok(LEMIPC_KEY_PATH, LEMIPC_KEY_VALGAME);
+	if (e->keygame == -1)
 		return (ERRORNO("ftok()"));
 	e->semid_reslife = semget(e->key, 1, IPC_CREAT | IPC_EXCL | 0666);
 	if (e->semid_reslife == -1 && errno != EEXIST)
