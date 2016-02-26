@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 14:52:45 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 15:02:14 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 15:39:14 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,18 @@ int		li_shm_nteam_destroy(t_env e[1])
 
 int		li_shm_nteam_read(t_env e[1])
 {
-	(void)e;
+	int const		*map;
+
+	e->shmid_nteam = shmget(e->key, sizeof(int), 0);
+	if (e->shmid_nteam == -1)
+		return (ERRORNO("shmget()"));
+	map = shmat(e->shmid_nteam, NULL, SHM_RDONLY);
+	if (map == (void*)-1)
+		return (ERRORNOF("shmat()"));
+	if (*map != e->param_nteam)
+		return (ERRORF("e->param_nteam does not match shm_nteam (%d vs %d)",
+					  e->param_nteam, *map));
+	(void)shmdt(map);
+	ft_printf("\t:yel:e->shmid_nteam read and valid:eoc:\n");
 	return (0);
 }

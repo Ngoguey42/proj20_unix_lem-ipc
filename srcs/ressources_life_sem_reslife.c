@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 15:28:17 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 15:28:18 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 15:35:28 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int		li_shm_reslife_read(t_env e[1])
 		if (semctl(e->semid_reslife, 0, IPC_STAT, su) < 0)
 			return (ERRORNO("semctl(..., IPC_STAT, ...)"));
 	}
-	ft_printf(":yel:Ressources read, (acquiring lock):eoc:\n");
+	ft_printf("\t:yel:e->semid_reslife ready, (acquiring lock):eoc:\n");
 	if (DOWN(e, 0))
 		return (ERRORNO("down()"));
 	return (0);

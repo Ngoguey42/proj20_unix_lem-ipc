@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:16:27 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 15:31:11 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 15:33:49 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ int				li_res_spawn_or_read(t_env e[1])
 		if (spawn_seq(e))
 			return (ERROR(""));
 	}
-	qprintf("Waiting before lock release\n");
+	WARNF("Waiting before lock release");
 	BREAK(e, 1);
 	if (UP(e, 0))
 		return (ERRORNO("up()"));
