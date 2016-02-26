@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 16:21:08 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:39:46 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,12 @@ struct s_msg_pid
 	pid_t			pid;
 };
 
+struct s_shm_gameinfo
+{
+	int				nteam;
+	int				wboard;
+};
+
 struct s_env
 {
 	key_t			key;
@@ -74,7 +80,7 @@ struct s_env
 
 	int				semid_reslife;
 	int				msqid_pids;
-	int				shmid_nteam;
+	int				shmid_gameinfo;
 
 	int				semid_game;
 	int				shmid_board;
@@ -102,9 +108,9 @@ int			li_msq_pids_spawn(t_env e[1]);
 int			li_msq_pids_destroy(t_env e[1]);
 int			li_msq_pids_read(t_env e[1]);
 
-int			li_shm_nteam_spawn(t_env e[1]);
-int			li_shm_nteam_destroy(t_env e[1]);
-int			li_shm_nteam_read(t_env e[1]);
+int			li_shm_gameinfo_spawn(t_env e[1]);
+int			li_shm_gameinfo_destroy(t_env e[1]);
+int			li_shm_gameinfo_read(t_env e[1]);
 
 
 int			li_res_destroy_or_defect(t_env e[1]);

@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:16:27 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 16:33:16 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:38:13 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,19 @@
 static int (*const g_spawn_seq[])() = {
 	&li_sem_reslife_spawn,
 	&li_msq_pids_spawn,
-	&li_shm_nteam_spawn,
+	&li_shm_gameinfo_spawn,
 };
 
 static int (*const g_destroy_seq[])() = {
 	&li_sem_reslife_destroy,
 	&li_msq_pids_destroy,
-	&li_shm_nteam_destroy,
+	&li_shm_gameinfo_destroy,
 };
 
 static int (*const g_read_seq[])() = {
 	&li_sem_reslife_read,
 	&li_msq_pids_read,
-	&li_shm_nteam_read,
+	&li_shm_gameinfo_read,
 };
 
 #define ASSERT1 (SEQ_NFUNC == SIZE_ARRAY(g_destroy_seq))
@@ -127,7 +127,6 @@ int				li_res_spawn_or_read(t_env e[1])
 int				li_res_destroy_or_defect(t_env e[1])
 {
 	int					count[1];
-	int					err;
 
 	if (DOWN(e, 0))
 		return (ERRORNO("down()"));
@@ -145,5 +144,5 @@ int				li_res_destroy_or_defect(t_env e[1])
 		if (UP(e, 0))
 			return (ERRORNO("up()"));
 	}
-	return (err);
+	return (0);
 }

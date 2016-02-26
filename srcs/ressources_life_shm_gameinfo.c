@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 14:52:45 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 16:27:29 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:40:52 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,50 +16,53 @@
 #include <signal.h>
 #include <sys/shm.h>
 
-int		li_shm_nteam_spawn(t_env e[1])
+int		li_shm_gameinfo_spawn(t_env e[1])
 {
-	int		*map;
+	struct s_shm_gameinfo	*map;
 
-	e->shmid_nteam = shmget(e->key, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
-	if (e->shmid_nteam == -1)
+	e->shmid_gameinfo = shmget(
+		e->key, sizeof(struct s_shm_gameinfo), IPC_CREAT | IPC_EXCL | 0666);
+	if (e->shmid_gameinfo == -1)
 		return (ERRORNO("shmget()"));
-	map = shmat(e->shmid_nteam, NULL, 0);
+	map = shmat(e->shmid_gameinfo, NULL, 0);
 	if (map == (void*)-1)
 	{
 		ERRORNOF("shmat()");
-		if (shmctl(e->shmid_nteam, IPC_RMID, NULL))
+		if (shmctl(e->shmid_gameinfo, IPC_RMID, NULL))
 			WARNNOF("shmctl()");
 		return (1);
 	}
-	*map = e->param_nteam;
+	map->nteam = e->param_nteam;
 	(void)shmdt(map);
-	ft_printf("\t:yel:e->shmid_nteam spawned and set:eoc:\n");
+	ft_printf("\t:yel:e->shmid_gameinfo spawned and set:eoc:\n");
 	return (0);
 }
 
-int		li_shm_nteam_destroy(t_env e[1])
+int		li_shm_gameinfo_destroy(t_env e[1])
 {
-	if (shmctl(e->shmid_nteam, IPC_RMID, NULL))
+	if (shmctl(e->shmid_gameinfo, IPC_RMID, NULL))
 		WARNNOF("shmctl()");
 	else
-		ft_printf("\t:yel:e->shmid_nteam destroyed:eoc:\n");
+		ft_printf("\t:yel:e->shmid_gameinfo destroyed:eoc:\n");
 	return (0);
 }
 
-int		li_shm_nteam_read(t_env e[1])
+int		li_shm_gameinfo_read(t_env e[1])
 {
-	int const		*map;
+	struct s_shm_gameinfo const		*map;
 
-	e->shmid_nteam = shmget(e->key, sizeof(int), 0);
-	if (e->shmid_nteam == -1)
+	e->shmid_gameinfo = shmget(e->key, sizeof(struct s_shm_gameinfo), 0);
+	if (e->shmid_gameinfo == -1)
 		return (ERRORNO("shmget()"));
-	map = shmat(e->shmid_nteam, NULL, SHM_RDONLY);
+	map = shmat(e->shmid_gameinfo, NULL, SHM_RDONLY);
 	if (map == (void*)-1)
 		return (ERRORNOF("shmat()"));
-	if (*map != e->param_nteam)
-		return (ERRORF("e->param_nteam does not match shm_nteam (%d vs %d)",
-					  e->param_nteam, *map));
+	if (e->param_nteam == -1)
+		e->param_nteam = map->nteam;
+	else if (map->nteam != e->param_nteam)
+		return (ERRORF("e->param_nteam does not match shm_gameinfo "
+					   "(%d vs %d)", e->param_nteam, map->nteam));
 	(void)shmdt(map);
-	ft_printf("\t:yel:e->shmid_nteam read and valid:eoc:\n");
+	ft_printf("\t:yel:e->shmid_gameinfo read and valid:eoc:\n");
 	return (0);
 }

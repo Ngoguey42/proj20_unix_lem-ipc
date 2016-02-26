@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 12:33:54 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 15:31:43 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:35:42 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ int			li_env_init(t_env e[1], int ac, char const *const *av)
 {
 	ft_bzero(e, sizeof(*e));
 	e->param_brk = -1;
+	e->param_nteam = -1;
 	if (args(e, (t_arg_parser[1]){ft_arg_create(ac, av)}))
 		return (1);
 	return (0);
