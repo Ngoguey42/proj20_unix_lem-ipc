@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 15:30:17 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:21:08 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,9 @@ int			li_res_spawn_or_read(t_env e[1]);
 int			li_res_spawn_keeplock(t_env e[1]);
 int			li_res_read_keeplock(t_env e[1]);
 
-int			li_shm_reslife_spawn(t_env e[1]);
-int			li_shm_reslife_destroy(t_env e[1]);
-int			li_shm_reslife_read(t_env e[1]);
+int			li_sem_reslife_spawn(t_env e[1]);
+int			li_sem_reslife_destroy(t_env e[1]);
+int			li_sem_reslife_read(t_env e[1]);
 
 int			li_msq_pids_spawn(t_env e[1]);
 int			li_msq_pids_destroy(t_env e[1]);

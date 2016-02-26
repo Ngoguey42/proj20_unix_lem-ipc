@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:16:27 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 15:33:49 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:25:34 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,19 +32,19 @@
 #define UP(e, flg) semop(e->semid_reslife, SEMBUFF_ARR(0, 1, flg), 1)
 
 static int (*const g_spawn_seq[])() = {
-	&li_shm_reslife_spawn,
+	&li_sem_reslife_spawn,
 	&li_msq_pids_spawn,
 	&li_shm_nteam_spawn,
 };
 
 static int (*const g_destroy_seq[])() = {
-	&li_shm_reslife_destroy,
+	&li_sem_reslife_destroy,
 	&li_msq_pids_destroy,
 	&li_shm_nteam_destroy,
 };
 
 static int (*const g_read_seq[])() = {
-	&li_shm_reslife_read,
+	&li_sem_reslife_read,
 	&li_msq_pids_read,
 	&li_shm_nteam_read,
 };
@@ -133,8 +133,13 @@ int				li_res_destroy_or_defect(t_env e[1])
 	err = li_res_resend_msq(e, count);
 	if (*count == 0)
 	{
+		ft_call_sequence(g_destroy_seq, (size_t const[2]){SEQ_NFUNC - 1, 0},
+						 NULL, e);
 	}
-	if (UP(e, 0))
-		return (ERRORNO("up()"));
+	else
+	{
+		if (UP(e, 0))
+			return (ERRORNO("up()"));
+	}
 	return (err);
 }

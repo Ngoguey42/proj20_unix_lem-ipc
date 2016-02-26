@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 13:49:38 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 15:31:27 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:27:18 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int			ft_call_sequence(
 	int (*const seqs[])(), size_t const bounds[2],
 	size_t faulty_index[1], void *ext)
 {
-	int const	delta = (bounds[1] >= bounds[0]) ? 1 : 0;
+	int const	delta = (bounds[1] >= bounds[0]) ? 1 : -1;
 	int			i;
 	int			err;
 

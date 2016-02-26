@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 15:28:17 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 15:35:28 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:27:41 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 #define DOWN(e, flg) semop(e->semid_reslife, SEMBUFF_ARR(0, -1, flg), 1)
 #define UP(e, flg) semop(e->semid_reslife, SEMBUFF_ARR(0, 1, flg), 1)
 
-int		li_shm_reslife_spawn(t_env e[1])
+int		li_sem_reslife_spawn(t_env e[1])
 {
 	union semun_t		su;
 
@@ -50,13 +50,16 @@ int		li_shm_reslife_spawn(t_env e[1])
 	return (0);
 }
 
-int		li_shm_reslife_destroy(t_env e[1])
+int		li_sem_reslife_destroy(t_env e[1])
 {
-	//TODO
+	if (semctl(e->semid_reslife, 0, IPC_RMID, NULL))
+		WARNNOF("semctl()");
+	else
+		ft_printf("\t:yel:e->semid_reslife destroyed:eoc:\n");
 	return (0);
 }
 
-int		li_shm_reslife_read(t_env e[1])
+int		li_sem_reslife_read(t_env e[1])
 {
 	union semun_t		su;
 	struct semid_ds		data;
@@ -66,15 +69,14 @@ int		li_shm_reslife_read(t_env e[1])
 		return (ERRORNO("semget()"));
 	ft_printf(":yel:Ressources found, checking its initialization...:eoc:\n");
 	su.buf = &data;
-	// TODO; merge in a while(1) if () break ; ...
-	if (semctl(e->semid_reslife, 0, IPC_STAT, su) < 0)
-		return (ERRORNO("semctl(..., IPC_STAT, ...)"));
-	while (su.buf->sem_otime == 0)
+	while (1)
 	{
-		ft_printf(":yel:Ressources found but not initialized, sleep...:eoc:\n");
-		(void)usleep(500000);
 		if (semctl(e->semid_reslife, 0, IPC_STAT, su) < 0)
 			return (ERRORNO("semctl(..., IPC_STAT, ...)"));
+		if (su.buf->sem_otime != 0)
+			break ;
+		ft_printf(":yel:Ressources found but not initialized, sleep...:eoc:\n");
+		(void)usleep(500000);
 	}
 	ft_printf("\t:yel:e->semid_reslife ready, (acquiring lock):eoc:\n");
 	if (DOWN(e, 0))
