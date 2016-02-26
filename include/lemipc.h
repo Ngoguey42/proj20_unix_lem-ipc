@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 17:51:46 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 18:08:03 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@
 # define LEMIPC_KEY_VAL 4224
 # define LEMIPC_KEY_VALGAME 4225
 
-# define SEQ_NFUNC 4
+# define SEQ_NFUNC 5
 
 /*
 ** BREAK(e, v) macro is used to pause the process until read returns
@@ -184,6 +184,10 @@ int			li_shm_gameinfo_read(t_env e[1]);
 int			li_sem_game_spawn(t_env e[1]);
 int			li_sem_game_destroy(t_env e[1]);
 int			li_sem_game_read(t_env e[1]);
+
+int			li_shm_board_spawn(t_env e[1]);
+int			li_shm_board_destroy(t_env e[1]);
+int			li_shm_board_read(t_env e[1]);
 
 /*
 ** Game Phase

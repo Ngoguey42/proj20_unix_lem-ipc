@@ -6,14 +6,13 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 17:44:15 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 17:50:59 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 17:57:47 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lemipc.h"
 
 #include <errno.h>
-#include <signal.h>
 #include <sys/sem.h>
 
 int		li_sem_game_spawn(t_env e[1])

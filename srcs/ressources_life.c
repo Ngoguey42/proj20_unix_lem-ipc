@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:16:27 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 17:56:22 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 18:07:54 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static int (*const g_spawn_seq[])() = {
 	&li_msq_pids_spawn,
 	&li_shm_gameinfo_spawn,
 	&li_sem_game_spawn,
+	&li_shm_board_spawn,
 };
 
 static int (*const g_destroy_seq[])() = {
@@ -43,6 +44,7 @@ static int (*const g_destroy_seq[])() = {
 	&li_msq_pids_destroy,
 	&li_shm_gameinfo_destroy,
 	&li_sem_game_destroy,
+	&li_shm_board_destroy,
 };
 
 static int (*const g_read_seq[])() = {
@@ -50,6 +52,7 @@ static int (*const g_read_seq[])() = {
 	&li_msq_pids_read,
 	&li_shm_gameinfo_read,
 	&li_sem_game_read,
+	&li_shm_board_read,
 };
 
 #define ASSERT1 (SEQ_NFUNC == SIZE_ARRAY(g_destroy_seq))
