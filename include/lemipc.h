@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 14:34:11 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 15:30:17 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 
 # define LEMIPC_KEY_PATH "/tmp"
 # define LEMIPC_KEY_VAL 4224
+# define LEMIPC_KEY_VALGAME 4225
 
 /*
 ** BREAK(e, v) macro is used to pause the process until read returns
@@ -46,6 +47,8 @@
 # define BREAK(e,v) do{if(e->param_brk==v){_BREAK_MSG(v);_BREAK_PAUSE;}}while(0)
 # define _BREAK_MSG(v) ERRORF("Pause with value (%d), HIT ENTER !!!", v)
 # define _BREAK_PAUSE read(0, (char[1]){0}, 1)
+
+# define SEQ_NFUNC 3
 
 typedef struct s_env		t_env;
 
@@ -75,6 +78,7 @@ struct s_env
 
 	int				semid_game;
 	int				shmid_board;
+	void			*shm_board;
 	t_ftvector		vec_msqids_team;
 
 	int				team_id;
@@ -90,13 +94,18 @@ int			li_res_spawn_or_read(t_env e[1]);
 int			li_res_spawn_keeplock(t_env e[1]);
 int			li_res_read_keeplock(t_env e[1]);
 
+int			li_shm_reslife_spawn(t_env e[1]);
+int			li_shm_reslife_destroy(t_env e[1]);
+int			li_shm_reslife_read(t_env e[1]);
 
 int			li_msq_pids_spawn(t_env e[1]);
 int			li_msq_pids_destroy(t_env e[1]);
 int			li_msq_pids_read(t_env e[1]);
+
 int			li_shm_nteam_spawn(t_env e[1]);
 int			li_shm_nteam_destroy(t_env e[1]);
 int			li_shm_nteam_read(t_env e[1]);
+
 
 int			li_res_destroy_or_defect(t_env e[1]);
 int			li_res_resend_msq(t_env e[1], int count[1]);

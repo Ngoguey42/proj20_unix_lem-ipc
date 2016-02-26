@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ressources_life_spawn.c                            :+:      :+:    :+:   */
+/*   ressources_life_shm_nteam.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/26 12:10:25 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 14:34:45 by ngoguey          ###   ########.fr       */
+/*   Created: 2016/02/26 14:52:45 by ngoguey           #+#    #+#             */
+/*   Updated: 2016/02/26 15:02:14 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,29 @@
 
 int		li_shm_nteam_spawn(t_env e[1])
 {
-	e->shmid_nteam = shmget(e->key, sizeof(bool), IPC_CREAT | IPC_EXCL | 0666);
+	int		*map;
+
+	e->shmid_nteam = shmget(e->key, sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
 	if (e->shmid_nteam == -1)
 		return (ERRORNO("shmget()"));
-	ft_printf("\t:yel:e->shmid_nteam spawned:eoc:\n");
+	map = shmat(e->shmid_nteam, NULL, 0);
+	if (map == (void*)-1)
+	{
+		ERRORNOF("shmat()");
+		if (shmctl(e->shmid_nteam, IPC_RMID, NULL))
+			WARNNOF("shmctl()");
+		return (1);
+	}
+	*map = e->param_nteam;
+	(void)shmdt(map);
+	ft_printf("\t:yel:e->shmid_nteam spawned and set:eoc:\n");
 	return (0);
 }
 
 int		li_shm_nteam_destroy(t_env e[1])
 {
 	if (shmctl(e->shmid_nteam, IPC_RMID, NULL))
-		ERRORNO("shmctl()");
+		WARNNOF("shmctl()");
 	else
 		ft_printf("\t:yel:e->shmid_nteam destroyed:eoc:\n");
 	return (0);

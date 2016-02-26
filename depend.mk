@@ -1,9 +1,10 @@
 O_FILES :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
-			obj/srcs/res_creation_msq.o obj/srcs/res_game.o \
-			obj/srcs/ressources_life.o obj/srcs/ressources_life_msq_pids.o \
-			obj/srcs/ressources_life_read.o \
-			obj/srcs/ressources_life_shm_nteam.o \
-			obj/srcs/ressources_life_spawn.o obj/srcs/signals.o
+			obj/srcs/old/ressources_life_read.o \
+			obj/srcs/old/ressources_life_spawn.o obj/srcs/res_creation_msq.o \
+			obj/srcs/res_game.o obj/srcs/ressources_life.o \
+			obj/srcs/ressources_life_msq_pids.o \
+			obj/srcs/ressources_life_sem_reslife.o \
+			obj/srcs/ressources_life_shm_nteam.o obj/srcs/signals.o
 
 LIBS_DEPEND := libft/libft.a
 
@@ -13,7 +14,7 @@ libs:
 
 
 
-MAX_SOURCE_LEN := 32
+MAX_SOURCE_LEN := 34
 obj/srcs/call_sequence.o: srcs/call_sequence.c libft/include/ft_ctype.h \
 	libft/include/ft_macroes.h libft/include/ft_stdio.h \
 	libft/include/ft_stdlib.h libft/include/ft_string.h \
@@ -29,6 +30,18 @@ obj/srcs/main.o: srcs/main.c include/lemipc.h libft/include/ft_ctype.h \
 	libft/include/ft_stdlib.h libft/include/ft_string.h \
 	libft/include/ft_typedefs.h libft/include/ft_vector.h \
 	libft/include/fterror.h libft/include/libft.h | obj/srcs/
+obj/srcs/old/ressources_life_read.o: srcs/old/ressources_life_read.c \
+	include/lemipc.h libft/include/ft_ctype.h libft/include/ft_macroes.h \
+	libft/include/ft_stdio.h libft/include/ft_stdlib.h \
+	libft/include/ft_string.h libft/include/ft_typedefs.h \
+	libft/include/ft_vector.h libft/include/fterror.h libft/include/libft.h \
+	| obj/srcs/old/
+obj/srcs/old/ressources_life_spawn.o: srcs/old/ressources_life_spawn.c \
+	include/lemipc.h libft/include/ft_ctype.h libft/include/ft_macroes.h \
+	libft/include/ft_stdio.h libft/include/ft_stdlib.h \
+	libft/include/ft_string.h libft/include/ft_typedefs.h \
+	libft/include/ft_vector.h libft/include/fterror.h libft/include/libft.h \
+	| obj/srcs/old/
 obj/srcs/res_creation_msq.o: srcs/res_creation_msq.c include/lemipc.h \
 	libft/include/ft_ctype.h libft/include/ft_macroes.h \
 	libft/include/ft_stdio.h libft/include/ft_stdlib.h \
@@ -52,19 +65,13 @@ obj/srcs/ressources_life_msq_pids.o: srcs/ressources_life_msq_pids.c \
 	libft/include/ft_string.h libft/include/ft_typedefs.h \
 	libft/include/ft_vector.h libft/include/fterror.h libft/include/libft.h \
 	| obj/srcs/
-obj/srcs/ressources_life_read.o: srcs/ressources_life_read.c include/lemipc.h \
-	libft/include/ft_ctype.h libft/include/ft_macroes.h \
-	libft/include/ft_stdio.h libft/include/ft_stdlib.h \
-	libft/include/ft_string.h libft/include/ft_typedefs.h \
-	libft/include/ft_vector.h libft/include/fterror.h libft/include/libft.h \
-	| obj/srcs/
-obj/srcs/ressources_life_shm_nteam.o: srcs/ressources_life_shm_nteam.c \
+obj/srcs/ressources_life_sem_reslife.o: srcs/ressources_life_sem_reslife.c \
 	include/lemipc.h libft/include/ft_ctype.h libft/include/ft_macroes.h \
 	libft/include/ft_stdio.h libft/include/ft_stdlib.h \
 	libft/include/ft_string.h libft/include/ft_typedefs.h \
 	libft/include/ft_vector.h libft/include/fterror.h libft/include/libft.h \
 	| obj/srcs/
-obj/srcs/ressources_life_spawn.o: srcs/ressources_life_spawn.c \
+obj/srcs/ressources_life_shm_nteam.o: srcs/ressources_life_shm_nteam.c \
 	include/lemipc.h libft/include/ft_ctype.h libft/include/ft_macroes.h \
 	libft/include/ft_stdio.h libft/include/ft_stdlib.h \
 	libft/include/ft_string.h libft/include/ft_typedefs.h \

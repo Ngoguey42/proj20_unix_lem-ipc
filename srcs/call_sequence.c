@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 13:49:38 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 14:20:46 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 15:31:27 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int			ft_call_sequence(
 				*faulty_index = i;
 			return (err);
 		}
-		if (i == bounds[1])
+		if (i == (int)bounds[1])
 			break ;
 		i += delta;
 	}

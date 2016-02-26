@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/24 12:33:54 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 12:33:59 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 15:31:43 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static int	handle_option(
 		*awaiting = 'c';
 		return (0);
 	}
+	(void)e;
 	return (1);
 }
 
