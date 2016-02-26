@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/26 12:16:27 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 16:25:34 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/26 16:33:16 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 #include <sys/msg.h>
 
 /*
-** res_sem (Ressources Semaphore) is used as a mutex for ressources
-**		creation/destruction.
+** sem_reslife (Ressources*Life Semaphore) is used as a mutex for ressources
+**		creation/destruction/read.
 ** *
 ** P() == DOWN() == DECREMENT == TAKE
 ** V() == UP() == INCREMENT == RELEASE
@@ -49,26 +49,27 @@ static int (*const g_read_seq[])() = {
 	&li_shm_nteam_read,
 };
 
-# define ASSERT1 (SEQ_NFUNC == SIZE_ARRAY(g_destroy_seq))
-static char         g_assert1[1 - (ASSERT1 ? 0 : 1) * 2];
-# define ASSERT2 (SEQ_NFUNC == SIZE_ARRAY(g_read_seq))
-static char         g_assert2[1 - (ASSERT2 ? 0 : 1) * 2];
-# define ASSERT3 (SEQ_NFUNC == SIZE_ARRAY(g_spawn_seq))
-static char         g_assert3[1 - (ASSERT3 ? 0 : 1) * 2];
-# define ASSERT4 (SEQ_NFUNC > 0)
-static char         g_assert4[1 - (ASSERT4 ? 0 : 1) * 2];
+#define ASSERT1 (SEQ_NFUNC == SIZE_ARRAY(g_destroy_seq))
+#define ASSERT2 (SEQ_NFUNC == SIZE_ARRAY(g_read_seq))
+#define ASSERT3 (SEQ_NFUNC == SIZE_ARRAY(g_spawn_seq))
+#define ASSERT4 (SEQ_NFUNC > 0)
 
-# define BOUNDS (size_t const[2]){0, SEQ_NFUNC - 1}
+static char		g_assert1[1 - (ASSERT1 ? 0 : 1) * 2];
+static char		g_assert2[1 - (ASSERT2 ? 0 : 1) * 2];
+static char		g_assert3[1 - (ASSERT3 ? 0 : 1) * 2];
+static char		g_assert4[1 - (ASSERT4 ? 0 : 1) * 2];
+
+#define BOUNDS (size_t const[2]){0, SEQ_NFUNC - 1}
 
 static int		spawn_seq(t_env e[1])
 {
-    size_t		faulty_index[1];
+	size_t		faulty_index[1];
 
-    if (ft_call_sequence(g_spawn_seq, BOUNDS, faulty_index, e))
+	if (ft_call_sequence(g_spawn_seq, BOUNDS, faulty_index, e))
 	{
 		ERRORF("Spawn sequence failed at step %d", *faulty_index);
 		ft_call_sequence(g_destroy_seq, (size_t const[2]){*faulty_index, 0},
-						 faulty_index, e);
+						faulty_index, e);
 		return (1);
 	}
 	(void)g_assert1;
@@ -80,9 +81,9 @@ static int		spawn_seq(t_env e[1])
 
 static int		read_seq(t_env e[1])
 {
-    size_t		faulty_index[1];
+	size_t		faulty_index[1];
 
-    if (ft_call_sequence(g_read_seq, BOUNDS, faulty_index, e))
+	if (ft_call_sequence(g_read_seq, BOUNDS, faulty_index, e))
 	{
 		ERRORF("Read sequence failed at step %d", *faulty_index);
 		return (1);
@@ -130,14 +131,17 @@ int				li_res_destroy_or_defect(t_env e[1])
 
 	if (DOWN(e, 0))
 		return (ERRORNO("down()"));
-	err = li_res_resend_msq(e, count);
-	if (*count == 0)
+	if (li_res_resend_msq(e, count))
 	{
-		ft_call_sequence(g_destroy_seq, (size_t const[2]){SEQ_NFUNC - 1, 0},
-						 NULL, e);
+		(void)UP(e, 0);
+		return (1);
 	}
-	else
+	else if (*count == 0)
 	{
+		ft_call_sequence(
+			g_destroy_seq, (size_t const[2]){SEQ_NFUNC - 1, 0}, NULL, e);
+	}
+	else {
 		if (UP(e, 0))
 			return (ERRORNO("up()"));
 	}
