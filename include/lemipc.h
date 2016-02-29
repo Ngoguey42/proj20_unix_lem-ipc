@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 20:07:13 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/29 11:38:17 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,10 @@ t_env		*li_env(void);
 */
 int			li_env_init(t_env e[1], int ac, char const * const *av);
 
+int			li_reslife_down(t_env e[1]);
+int			li_reslife_down_loop(t_env e[1]);
+int			li_reslife_up(t_env e[1]);
+
 int			li_set_signals(t_env e[1]);
 
 int			li_res_spawn_or_read(t_env e[1]);
@@ -194,6 +198,7 @@ int			li_shm_board_read(t_env e[1]);
 ** Game Phase
 */
 int			li_game_down(t_env e[1]);
+int			li_game_down_loop(t_env e[1]);
 int			li_game_up(t_env e[1]);
 
 /*

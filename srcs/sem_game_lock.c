@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   game_sem_game.c                                    :+:      :+:    :+:   */
+/*   sem_game_lock.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/02/26 20:05:21 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 20:35:05 by ngoguey          ###   ########.fr       */
+/*   Created: 2016/02/29 11:37:08 by ngoguey           #+#    #+#             */
+/*   Updated: 2016/02/29 11:37:08 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,18 @@
 #define UP(e, flg) semop(e->semid_game, SEMBUFF_ARR(0, 1, flg), 1)
 
 int			li_game_down(t_env e[1])
+{
+	if (DOWN(e, 0))
+	{
+		if (errno == EINTR)
+			return (1);
+		else
+			return (ERRORNO("down()"));
+	}
+	return (0);
+}
+
+int			li_game_down_loop(t_env e[1])
 {
 	int		i;
 
@@ -50,22 +62,5 @@ int			li_game_down(t_env e[1])
 
 int			li_game_up(t_env e[1])
 {
-	int		i;
-
-	i = 0;
-	while (1)
-	{
-		if (UP(e, 0))
-		{
-			if (errno == EINTR && i++ < 3)
-				continue ;
-			else if (errno == EINTR)
-				return (ERRORNO("Abording up() after 3 attempts"));
-			else
-				return (ERRORNO("up()"));
-		}
-		else
-			break ;
-	}
-	return (0);
+	return (UP(e, 0));
 }

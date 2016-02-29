@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:51:30 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/26 20:12:26 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/02/29 11:32:06 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,12 @@ int		game_loop(t_env e[1])
 	while (!e->leave_game)
 	{
 		if (li_game_down(e))
-			return (ERROR(""));
+		{
+			if (errno == EINTR)
+				break ;
+			else
+				return (ERRORNO(""));
+		}
 		/* T; */
 		if (li_game_up(e))
 			return (ERROR(""));
