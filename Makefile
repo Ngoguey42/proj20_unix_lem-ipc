@@ -113,9 +113,12 @@ all: _all_git
 -include $(DEPEND)
 
 _all_git: $(MODULE_RULES)
+	$(MAKE) _all_libs
+
+_all_libs: $(LIBSMAKE)
 	$(MAKE) _all_separate_compilation
 
-_all_separate_compilation: $(LIBSMAKE) $(SRCSBIN)
+_all_separate_compilation: $(SRCSBIN)
 	$(MAKE) _all_linkage
 
 _all_linkage: $(NAME)
@@ -159,4 +162,4 @@ re: fclean
 # ============================================================================ #
 # Special targets
 .SILENT:
-.PHONY: all clean fclean re _all_git _all_separate_compilation _all_linkage $(LIBSMAKE)
+.PHONY: all clean fclean re _all_git _all_libs _all_separate_compilation _all_linkage $(LIBSMAKE)
