@@ -1,4 +1,4 @@
-MKGEN_SRCSBIN_MAIN :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
+MKGEN_SRCSBIN_DEFAULT :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
 			obj/srcs/res_creation_msq.o obj/srcs/ressources_life.o \
 			obj/srcs/ressources_life_msq_pids.o \
 			obj/srcs/ressources_life_sem_game.o \
@@ -7,8 +7,7 @@ MKGEN_SRCSBIN_MAIN :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
 			obj/srcs/ressources_life_shm_gameinfo.o obj/srcs/sem_game_lock.o \
 			obj/srcs/sem_reslife_lock.o obj/srcs/signals.o
 
-MKGEN_LIBSMAKE_MAIN := libft
-MKGEN_LIBSBIN_MAIN := libft/libft.a
+MKGEN_LIBSBIN_DEFAULT := libft/libft.a
 
 MKGEN_SRCSBIN_GUI :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
 			obj/srcs/res_creation_msq.o obj/srcs/ressources_life.o \
@@ -19,7 +18,6 @@ MKGEN_SRCSBIN_GUI :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
 			obj/srcs/ressources_life_shm_gameinfo.o obj/srcs/sem_game_lock.o \
 			obj/srcs/sem_reslife_lock.o obj/srcs/signals.o
 
-MKGEN_LIBSMAKE_GUI := libft libftui
 MKGEN_LIBSBIN_GUI := libft/libft.a libftui/libftui.a
 
 # libs:

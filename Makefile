@@ -5,22 +5,22 @@
 
 # Git submodule to init
 MODULES				:= libft libftui
-# Makefiles to call (NAME variable req) (-> MKGEN_LIBSBIN_* MKGEN_LIBSMAKE_*)
-MKGEN_LIBS_MAIN		:= libft
-MKGEN_LIBS_GUI		:= libft libftui
 # Include dirs for .o dependencies
-INCLUDE_DIRS		:= include libft/include
-# Source files (-> MKGEN_SRCSBIN_*)
-MKGEN_SRCSDIRS_MAIN	:= srcs srcs_main
-MKGEN_SRCSDIRS_GUI	:= srcs srcs_gui
+MKGEN_INCLUDESDIRS	:= include libft/include
 # Obj files directory
 MKGEN_OBJDIR		:= obj
+# Makefiles to call (NAME variable req) (-> MKGEN_LIBSBIN_*)
+MKGEN_LIBSDIRS_DEFAULT	:= libft
+MKGEN_LIBSDIRS_GUI	:= libft libftui
+# Source files (-> MKGEN_SRCSBIN_*)
+MKGEN_SRCSDIRS_DEFAULT	:= srcs srcs_default
+MKGEN_SRCSDIRS_GUI	:= srcs srcs_gui
 
 
 # ============================================================================ #
 # Default  flags
 BASE_FLAGS		= -Wall -Wextra
-HEAD_FLAGS		= $(addprefix -I,$(INCLUDE_DIRS))
+HEAD_FLAGS		= $(addprefix -I,$(INCLUDEDIRS))
 LD_FLAGS		= $(BASE_FLAGS) -Llibft -lft -o $@
 
 MAKEFLAGS		+= -j
@@ -28,35 +28,39 @@ MAKEFLAGS		+= -j
 
 # ============================================================================ #
 # Build mode
-BUILD_MODE		= main
+BUILD_MODE		= default
 ifeq ($(BUILD_MODE),test)
 	NAME			:= lemipc-test
 	SRCSBIN			= $(MKGEN_SRCSBIN_TEST)
-	LIBSMAKE		= $(MKGEN_LIBSMAKE_TEST)
 	LIBSBIN			= $(MKGEN_LIBSBIN_TEST)
+	LIBSMAKE		= $(MKGEN_LIBSMAKE_TEST)
+	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS)
 	CC_LD			= $(CC_CPP)
 	BASE_FLAGS		+= -O2
 	LD_FLAGS		+= -lboost_unit_test_framework
 else ifeq ($(BUILD_MODE),debug)
 	NAME			:= lemipc
-	SRCSBIN			= $(MKGEN_SRCSBIN_MAIN)
-	LIBSMAKE		= $(MKGEN_LIBSMAKE_MAIN)
-	LIBSBIN			= $(MKGEN_LIBSBIN_MAIN)
+	SRCSBIN			= $(MKGEN_SRCSBIN_DEFAULT)
+	LIBSBIN			= $(MKGEN_LIBSBIN_DEFAULT)
+	LIBSMAKE		= $(MKGEN_LIBSDIRS_DEFAULT)
+	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS)
 	CC_LD			= $(CC_C)
 	BASE_FLAGS		+= -g
 else ifeq ($(BUILD_MODE),gui)
 	NAME			:= lemipc-gui
 	SRCSBIN			= $(MKGEN_SRCSBIN_GUI)
-	LIBSMAKE		= $(MKGEN_LIBSMAKE_GUI)
 	LIBSBIN			= $(MKGEN_LIBSBIN_GUI)
+	LIBSMAKE		= $(MKGEN_LIBSDIRS_GUI)
+	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS)
 	CC_LD			= $(CC_CPP)
 	BASE_FLAGS		+= -O2 -DMAC_OS_MODE=1
-	LD_FLAGS		+= -Llibftui -lftui -lglfw3 -framework OpenGL
+	LD_FLAGS		+= -lglfw3 -framework OpenGL -Llibftui -lftui
 else
 	NAME			:= lemipc
-	SRCSBIN			= $(MKGEN_SRCSBIN_MAIN)
-	LIBSMAKE		= $(MKGEN_LIBSMAKE_MAIN)
-	LIBSBIN			= $(MKGEN_LIBSBIN_MAIN)
+	SRCSBIN			= $(MKGEN_SRCSBIN_DEFAULT)
+	LIBSBIN			= $(MKGEN_LIBSBIN_DEFAULT)
+	LIBSMAKE		= $(MKGEN_LIBSDIRS_DEFAULT)
+	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS)
 	CC_LD			= $(CC_C)
 	BASE_FLAGS		+= -O2
 endif
@@ -101,11 +105,9 @@ all: _all_git
 -include $(DEPEND)
 
 _all_git: $(MODULE_RULES)
-	echo hello
 	$(MAKE) _all_separate_compilation
 
 _all_separate_compilation: $(LIBSMAKE) $(SRCSBIN)
-	echo hello2
 	$(MAKE) _all_linkage
 
 _all_linkage: $(NAME)
@@ -144,9 +146,6 @@ fclean: clean
 # Clean and make
 re: fclean
 	$(MAKE) all
-
-gui:
-	$(MAKE) BUILD_MODE=gui
 
 
 # ============================================================================ #
