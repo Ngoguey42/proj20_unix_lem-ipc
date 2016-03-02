@@ -60,7 +60,7 @@ else ifeq ($(BUILD_MODE),gui)
 	SRCSBIN			= $(MKGEN_SRCSBIN_GUI) #gen by mkgen
 	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS) libftui/_objs/_public
 	BASE_FLAGS		+= -O2 -DMAC_OS_MODE=1
-	LD_FLAGS		+= -lglfw3 -framework OpenGL -lfreetype -Llibftui -lftui
+	LD_FLAGS		+= -lglfw3 -framework OpenGL -lfreetype
 	LD_FLAGS		+= -Llibftui -lftui
 	LD_FLAGS		+= -Llibftui/liblua/lua-5.3.1/src -llua
 else

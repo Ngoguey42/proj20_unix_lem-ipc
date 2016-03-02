@@ -6,12 +6,13 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/11/07 10:15:01 by ngoguey           #+#    #+#             //
-//   Updated: 2016/03/02 19:39:00 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/03/02 19:56:26 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 #include <iostream>
 #include <array>
+#include <fstream>
 
 #include "ft/utils.hpp"
 #include "ftui/AView.hpp"
@@ -56,6 +57,10 @@ Main::Main(void)
 	, _tiles()
 	, _act(WIN_SIZEVI)
 {
+	std::ifstream	is("res/layout.xml");
+
+	_act.inflate(is);
+
 	std::srand(time(NULL));
 
 	if (glfwInit() != GL_TRUE)
@@ -115,6 +120,7 @@ void				Main::loop(void)
 	{
 		glfwPollEvents();
 		_tiles.render();
+		_act.render(canvas);
 		_canvasHolder.render();
 		glfwSwapBuffers(_window);
 	}

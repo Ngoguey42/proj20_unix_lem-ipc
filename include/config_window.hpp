@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/10/11 11:03:51 by ngoguey           #+#    #+#             //
-//   Updated: 2016/03/02 19:15:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/03/02 19:54:34 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -16,8 +16,6 @@
 # include <type_traits>
 
 # include "ft/Vec.hpp"
-
-
 
 template<typename Ret = int, typename T>
 constexpr Ret	round_toi(T x)

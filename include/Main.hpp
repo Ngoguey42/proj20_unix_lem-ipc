@@ -6,12 +6,20 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/11/07 12:58:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/03/02 19:37:16 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/03/02 19:49:22 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
 #ifndef MAIN_HPP
 # define MAIN_HPP
+
+extern "C"
+{
+# include "lemipc.h"
+# ifdef T
+#  undef T
+# endif
+}
 
 # include "gl/gl.hpp"
 # include "gl_canvas/GlCanvasHolder.hpp"

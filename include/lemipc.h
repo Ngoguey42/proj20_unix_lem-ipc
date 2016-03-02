@@ -6,7 +6,7 @@
 /*   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/23 15:52:08 by ngoguey           #+#    #+#             */
-/*   Updated: 2016/02/29 11:38:17 by ngoguey          ###   ########.fr       */
+/*   Updated: 2016/03/02 19:48:59 by ngoguey          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,20 @@ typedef struct s_env		t_env;
 ** Union required by some syscall
 */
 
+/* # if !(!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) */
+
+# ifndef __cplusplus
+
 union semun_t
 {
 	int				val;
 	struct semid_ds	*buf;
 	unsigned short	*array;
 };
+
+# endif
+
+/* # endif */
 
 /*
 ** Self pid information, used to keep track of num processes alive regarding
