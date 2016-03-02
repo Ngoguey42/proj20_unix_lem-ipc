@@ -3,66 +3,63 @@
 # ============================================================================ #
 # Directories
 
-# Executable name
-NAME			:= lemipc
 # Git submodule to init
-MODULES			:= libft
-# Makefiles to call (NAME rule required in them)
-LIBS			:= libft
-
-INCLUDE_DIRS	= include libft/include
-
-SRCS_DIRS		= srcs
-O_DIR			:= obj
-
-
-
-SRCS_DIRS_MAIN	:= srcs srcs_main
-LIBS_MAIN		:= libft
-#-> OBJ_DEPEND_MAIN
-#-> LIBS_DEPEND_MAIN
-
-SRCS_DIRS_GUI	:= srcs srcs_gui
-LIBS_GUI		:= libft libftui
-#-> OBJ_DEPEND_GUI
-#-> LIBS_DEPEND_GUI
-
-MKGEN_SRCS_DIRS_RULES	:= SRCS_DIRS_MAIN SRCS_DIRS_GUI
-MKGEN_LIBS_DIRS_RULES	:= LIBS_MAIN LIBS_GUI
-MKGEN_OBJ_DIR			:= $(O_DIR)
+MODULES				:= libft libftui
+# Makefiles to call (NAME variable req) (-> MKGEN_LIBSBIN_* MKGEN_LIBSMAKE_*)
+MKGEN_LIBS_MAIN		:= libft
+MKGEN_LIBS_GUI		:= libft libftui
+# Include dirs for .o dependencies
+INCLUDE_DIRS		:= include libft/include
+# Source files (-> MKGEN_SRCSBIN_*)
+MKGEN_SRCSDIRS_MAIN	:= srcs srcs_main
+MKGEN_SRCSDIRS_GUI	:= srcs srcs_gui
+# Obj files directory
+MKGEN_OBJDIR		:= obj
 
 
 # ============================================================================ #
-# Default  flags / compilers
+# Default  flags
 BASE_FLAGS		= -Wall -Wextra
 HEAD_FLAGS		= $(addprefix -I,$(INCLUDE_DIRS))
 LD_FLAGS		= $(BASE_FLAGS) -Llibft -lft -o $@
-
-CC_LD			= $(CC_C)
 
 MAKEFLAGS		+= -j
 
 
 # ============================================================================ #
 # Build mode
-BUILD_MODE		= build
+BUILD_MODE		= main
 ifeq ($(BUILD_MODE),test)
-	SRCS_DIRS		+= srcs_test
-	LD_FLAGS		+= -lboost_unit_test_framework
+	NAME			:= lemipc-test
+	SRCSBIN			= $(MKGEN_SRCSBIN_TEST)
+	LIBSMAKE		= $(MKGEN_LIBSMAKE_TEST)
+	LIBSBIN			= $(MKGEN_LIBSBIN_TEST)
+	CC_LD			= $(CC_CPP)
 	BASE_FLAGS		+= -O2
+	LD_FLAGS		+= -lboost_unit_test_framework
 else ifeq ($(BUILD_MODE),debug)
-	SRCS_DIRS		+= srcs_build
+	NAME			:= lemipc
+	SRCSBIN			= $(MKGEN_SRCSBIN_MAIN)
+	LIBSMAKE		= $(MKGEN_LIBSMAKE_MAIN)
+	LIBSBIN			= $(MKGEN_LIBSBIN_MAIN)
+	CC_LD			= $(CC_C)
 	BASE_FLAGS		+= -g
+else ifeq ($(BUILD_MODE),gui)
+	NAME			:= lemipc-gui
+	SRCSBIN			= $(MKGEN_SRCSBIN_GUI)
+	LIBSMAKE		= $(MKGEN_LIBSMAKE_GUI)
+	LIBSBIN			= $(MKGEN_LIBSBIN_GUI)
+	CC_LD			= $(CC_CPP)
+	BASE_FLAGS		+= -O2 -DMAC_OS_MODE=1
+	LD_FLAGS		+= -Llibftui -lftui -lglfw3 -framework OpenGL
 else
-	SRCS_DIRS		+= srcs_build
-	BASE_FLAGS		+=
+	NAME			:= lemipc
+	SRCSBIN			= $(MKGEN_SRCSBIN_MAIN)
+	LIBSMAKE		= $(MKGEN_LIBSMAKE_MAIN)
+	LIBSBIN			= $(MKGEN_LIBSBIN_MAIN)
+	CC_LD			= $(CC_C)
+	BASE_FLAGS		+= -O2
 endif
-
-# legacy with makemake ===========================
-DIRS			:= srcs srcs_build #DEPRECATED
-# DEBUG_MODE		?= 0
-# export DEBUG_MODE
-# /legacy with makemake ===========================
 
 
 # ============================================================================ #
@@ -78,7 +75,7 @@ SHELL			:= /bin/bash
 # ============================================================================ #
 # C
 C_FLAGS			= $(HEAD_FLAGS) $(BASE_FLAGS)
-ifeq ($(UNAME),Cygwin)
+ifeq ($(UNAME),CYGWIN)
 	CC_C		= x86_64-w64-mingw32-gcc
 else
 	CC_C		= clang
@@ -88,7 +85,7 @@ endif
 # ============================================================================ #
 # C++
 CPP_FLAGS		= $(HEAD_FLAGS) $(BASE_FLAGS) -std=c++14
-ifeq ($(UNAME),Cygwin)
+ifeq ($(UNAME),CYGWIN)
 	CC_CPP		= x86_64-w64-mingw32-g++
 	LD_FLAGS	+= -static
 else
@@ -97,38 +94,30 @@ endif
 
 
 # ============================================================================ #
-HEAD_FLAGS := $(HEAD_FLAGS)
-C_FLAGS := $(C_FLAGS)
-CPP_FLAGS := $(CPP_FLAGS)
-
-CC_C := $(CC_C)
-CC_CPP := $(CC_CPP)
-
-
-# ============================================================================ #
 # Rules
-# Default rule (need to be before any include)
-all: _all1
+# Default rule (needed to be before any include)
+all: _all_git
 
-# Include $(O_FILES) and dependencies
 -include $(DEPEND)
 
-_all1: $(MODULE_RULES)
-	$(MAKE) _all2
+_all_git: $(MODULE_RULES)
+	echo hello
+	$(MAKE) _all_separate_compilation
 
-_all2: libs $(O_FILES)
-	$(MAKE) _all3
+_all_separate_compilation: $(LIBSMAKE) $(SRCSBIN)
+	echo hello2
+	$(MAKE) _all_linkage
 
-_all3: $(NAME)
+_all_linkage: $(NAME)
 
 # Linking
-$(NAME): $(LIBS_DEPEND) $(O_FILES)
-	$(CC_LD) $(LD_FLAGS) $(O_FILES) && $(PRINT_LINK)
+$(NAME): $(LIBSBIN) $(SRCSBIN)
+	$(CC_LD) $(LD_FLAGS) $(SRCSBIN) && $(PRINT_LINK)
 
 # Compiling
-$(O_DIR)/%.o: %.c
+$(MKGEN_OBJDIR)/%.o: %.c
 	$(CC_C) $(C_FLAGS) -c $< -o $@ && $(PRINT_OK)
-$(O_DIR)/%.o: %.cpp
+$(MKGEN_OBJDIR)/%.o: %.cpp
 	$(CC_CPP) $(CPP_FLAGS) -c $< -o $@ && $(PRINT_OK)
 
 # Init submodules
@@ -136,13 +125,17 @@ $(MODULE_RULES):
 	git submodule init $(@:.git=)
 	git submodule update $(@:.git=)
 
+# Compile libs
+$(LIBSMAKE):
+	$(MAKE) -C $@
+
 # Create obj directories
-$(O_DIR)/%/:
+$(MKGEN_OBJDIR)/%/:
 	mkdir -p $@
 
 # Clean obj files
 clean:
-	rm -f $(O_FILES)
+	rm -f $(SRCSBIN)
 
 # Clean everything
 fclean: clean
@@ -152,8 +145,11 @@ fclean: clean
 re: fclean
 	$(MAKE) all
 
+gui:
+	$(MAKE) BUILD_MODE=gui
+
 
 # ============================================================================ #
 # Special targets
 .SILENT:
-.PHONY: all clean fclean re _all1 _all2 _all3
+.PHONY: all clean fclean re _all_git _all_separate_compilation _all_linkage $(LIBSMAKE)

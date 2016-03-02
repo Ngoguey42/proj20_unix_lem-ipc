@@ -1,4 +1,4 @@
-O_FILES :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
+MKGEN_SRCSBIN_MAIN :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
 			obj/srcs/res_creation_msq.o obj/srcs/ressources_life.o \
 			obj/srcs/ressources_life_msq_pids.o \
 			obj/srcs/ressources_life_sem_game.o \
@@ -7,15 +7,28 @@ O_FILES :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
 			obj/srcs/ressources_life_shm_gameinfo.o obj/srcs/sem_game_lock.o \
 			obj/srcs/sem_reslife_lock.o obj/srcs/signals.o
 
-LIBS_DEPEND := libft/libft.a
+MKGEN_LIBSMAKE_MAIN := libft
+MKGEN_LIBSBIN_MAIN := libft/libft.a
 
-libs:
-	make -C libft
-.PHONY: libs
+MKGEN_SRCSBIN_GUI :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
+			obj/srcs/res_creation_msq.o obj/srcs/ressources_life.o \
+			obj/srcs/ressources_life_msq_pids.o \
+			obj/srcs/ressources_life_sem_game.o \
+			obj/srcs/ressources_life_sem_reslife.o \
+			obj/srcs/ressources_life_shm_board.o \
+			obj/srcs/ressources_life_shm_gameinfo.o obj/srcs/sem_game_lock.o \
+			obj/srcs/sem_reslife_lock.o obj/srcs/signals.o
+
+MKGEN_LIBSMAKE_GUI := libft libftui
+MKGEN_LIBSBIN_GUI := libft/libft.a libftui/libftui.a
+
+# libs:
+# 	make -C libft
+# .PHONY: libs
 
 
 
-MAX_SOURCE_LEN := 35
+# MAX_SOURCE_LEN := 35
 obj/srcs/call_sequence.o: srcs/call_sequence.c libft/include/ft_arithmetic.h \
 	libft/include/ft_ctype.h libft/include/ft_macroes.h \
 	libft/include/ft_stdio.h libft/include/ft_stdlib.h \
