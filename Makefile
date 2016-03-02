@@ -4,17 +4,14 @@
 # Directories
 
 # Git submodule to init
-MODULES				:= libft libftui
+MODULES					:= libft libftui
 # Include dirs for .o dependencies
-MKGEN_INCLUDESDIRS	:= include libft/include
+MKGEN_INCLUDESDIRS		:= include libft/include
 # Obj files directory
-MKGEN_OBJDIR		:= obj
-# Makefiles to call (NAME variable req) (-> MKGEN_LIBSBIN_*)
-MKGEN_LIBSDIRS_DEFAULT	:= libft
-MKGEN_LIBSDIRS_GUI	:= libft libftui
-# Source files (-> MKGEN_SRCSBIN_*)
+MKGEN_OBJDIR			:= obj
+# Source files (-> MKGEN_SRCSBIN_* variables, $(MKGEN_OBJDIR)/**/*.o rules)
 MKGEN_SRCSDIRS_DEFAULT	:= srcs srcs_default
-MKGEN_SRCSDIRS_GUI	:= srcs srcs_gui
+MKGEN_SRCSDIRS_GUI		:= srcs srcs_gui
 
 
 # ============================================================================ #
@@ -28,40 +25,47 @@ MAKEFLAGS		+= -j
 
 # ============================================================================ #
 # Build mode
+#	NAME		link; target
+#	CC_LD		link; ld
+#	LIBSBIN		link; dependancies
+#	LIBSMAKE	separate compilation; makefiles to call
+#	SRCSBIN		separate compilation; sources
+#	INCLUDEDIRS	separate compilation; sources includes path
+
 BUILD_MODE		= default
 ifeq ($(BUILD_MODE),test)
 	NAME			:= lemipc-test
-	SRCSBIN			= $(MKGEN_SRCSBIN_TEST)
-	LIBSBIN			= $(MKGEN_LIBSBIN_TEST)
-	LIBSMAKE		= $(MKGEN_LIBSMAKE_TEST)
-	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS)
 	CC_LD			= $(CC_CPP)
+	LIBSBIN			= libft/libft.a
+	LIBSMAKE		= libft
+	SRCSBIN			= $(MKGEN_SRCSBIN_TEST) #gen by mkgen
+	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS)
 	BASE_FLAGS		+= -O2
 	LD_FLAGS		+= -lboost_unit_test_framework
 else ifeq ($(BUILD_MODE),debug)
 	NAME			:= lemipc
-	SRCSBIN			= $(MKGEN_SRCSBIN_DEFAULT)
-	LIBSBIN			= $(MKGEN_LIBSBIN_DEFAULT)
-	LIBSMAKE		= $(MKGEN_LIBSDIRS_DEFAULT)
-	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS)
 	CC_LD			= $(CC_C)
+	LIBSBIN			= libft/libft.a
+	LIBSMAKE		= libft
+	SRCSBIN			= $(MKGEN_SRCSBIN_DEFAULT) #gen by mkgen
+	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS)
 	BASE_FLAGS		+= -g
 else ifeq ($(BUILD_MODE),gui)
 	NAME			:= lemipc-gui
-	SRCSBIN			= $(MKGEN_SRCSBIN_GUI)
-	LIBSBIN			= $(MKGEN_LIBSBIN_GUI)
-	LIBSMAKE		= $(MKGEN_LIBSDIRS_GUI)
-	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS)
 	CC_LD			= $(CC_CPP)
+	LIBSBIN			= libft/libft.a libftui/libftui.a
+	LIBSMAKE		= libft libftui
+	SRCSBIN			= $(MKGEN_SRCSBIN_GUI) #gen by mkgen
+	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS) libftui/_objs/_public
 	BASE_FLAGS		+= -O2 -DMAC_OS_MODE=1
 	LD_FLAGS		+= -lglfw3 -framework OpenGL -Llibftui -lftui
 else
 	NAME			:= lemipc
-	SRCSBIN			= $(MKGEN_SRCSBIN_DEFAULT)
-	LIBSBIN			= $(MKGEN_LIBSBIN_DEFAULT)
-	LIBSMAKE		= $(MKGEN_LIBSDIRS_DEFAULT)
-	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS)
 	CC_LD			= $(CC_C)
+	LIBSBIN			= libft/libft.a
+	LIBSMAKE		= libft
+	SRCSBIN			= $(MKGEN_SRCSBIN_DEFAULT) #gen by mkgen
+	INCLUDEDIRS		= $(MKGEN_INCLUDESDIRS)
 	BASE_FLAGS		+= -O2
 endif
 

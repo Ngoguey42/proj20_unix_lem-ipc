@@ -7,8 +7,6 @@ MKGEN_SRCSBIN_DEFAULT :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o
 			obj/srcs/ressources_life_shm_gameinfo.o obj/srcs/sem_game_lock.o \
 			obj/srcs/sem_reslife_lock.o obj/srcs/signals.o
 
-MKGEN_LIBSBIN_DEFAULT := libft/libft.a
-
 MKGEN_SRCSBIN_GUI :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
 			obj/srcs/res_creation_msq.o obj/srcs/ressources_life.o \
 			obj/srcs/ressources_life_msq_pids.o \
@@ -18,15 +16,6 @@ MKGEN_SRCSBIN_GUI :=	obj/srcs/call_sequence.o obj/srcs/env.o obj/srcs/main.o \
 			obj/srcs/ressources_life_shm_gameinfo.o obj/srcs/sem_game_lock.o \
 			obj/srcs/sem_reslife_lock.o obj/srcs/signals.o
 
-MKGEN_LIBSBIN_GUI := libft/libft.a libftui/libftui.a
-
-# libs:
-# 	make -C libft
-# .PHONY: libs
-
-
-
-# MAX_SOURCE_LEN := 35
 obj/srcs/call_sequence.o: srcs/call_sequence.c libft/include/ft_arithmetic.h \
 	libft/include/ft_ctype.h libft/include/ft_macroes.h \
 	libft/include/ft_stdio.h libft/include/ft_stdlib.h \
