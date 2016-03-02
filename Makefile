@@ -7,12 +7,29 @@
 NAME			:= lemipc
 # Git submodule to init
 MODULES			:= libft
-# Makefiles to call
+# Makefiles to call (NAME rule required in them)
 LIBS			:= libft
 
 INCLUDE_DIRS	= include libft/include
+
 SRCS_DIRS		= srcs
 O_DIR			:= obj
+
+
+
+SRCS_DIRS_MAIN	:= srcs srcs_main
+LIBS_MAIN		:= libft
+#-> OBJ_DEPEND_MAIN
+#-> LIBS_DEPEND_MAIN
+
+SRCS_DIRS_GUI	:= srcs srcs_gui
+LIBS_GUI		:= libft libftui
+#-> OBJ_DEPEND_GUI
+#-> LIBS_DEPEND_GUI
+
+MKGEN_SRCS_DIRS_RULES	:= SRCS_DIRS_MAIN SRCS_DIRS_GUI
+MKGEN_LIBS_DIRS_RULES	:= LIBS_MAIN LIBS_GUI
+MKGEN_OBJ_DIR			:= $(O_DIR)
 
 
 # ============================================================================ #
@@ -42,7 +59,7 @@ else
 endif
 
 # legacy with makemake ===========================
-DIRS			:= srcs srcs_build
+DIRS			:= srcs srcs_build #DEPRECATED
 # DEBUG_MODE		?= 0
 # export DEBUG_MODE
 # /legacy with makemake ===========================
@@ -86,6 +103,7 @@ CPP_FLAGS := $(CPP_FLAGS)
 
 CC_C := $(CC_C)
 CC_CPP := $(CC_CPP)
+
 
 # ============================================================================ #
 # Rules
