@@ -5,14 +5,16 @@
 
 # Git submodule to init
 MODULES					:= libft libftui
-# Include dirs for .o dependencies
+# include search path for .o dependencies
 MKGEN_INCLUDESDIRS		:= include libft/include
 # Obj files directory
 MKGEN_OBJDIR			:= obj
-# Source files (-> MKGEN_SRCSBIN_* variables, $(MKGEN_OBJDIR)/**/*.o rules)
+# Source files directories
 MKGEN_SRCSDIRS_DEFAULT	:= srcs srcs_default
 MKGEN_SRCSDIRS_GUI		:= srcs srcs_gui
 
+# mkgen -> MKGEN_SRCSBIN_* variables
+# mkgen -> $(MKGEN_OBJDIR)/**/*.o rules
 
 # ============================================================================ #
 # Default  flags
