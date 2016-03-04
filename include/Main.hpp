@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/11/07 12:58:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/03/02 19:49:22 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/03/04 19:17:04 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -64,6 +64,13 @@ public:
 	//TODO: Push application's classes too
 	static Main				*ftlua_pop(lua_State *l, int i,
 								std::function<void(std::string)> panic);
+	void					ftlua_push(
+		lua_State *l, std::function<void(std::string)> panic);
+
+	static int				instanceLua(lua_State *l);
+	static int				getBoardWidthLua(lua_State *l);
+	static int				getBoardLua(lua_State *l);
+
 
 private:
 	GLFWwindow									*_window;

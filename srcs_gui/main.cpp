@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/11/07 10:15:01 by ngoguey           #+#    #+#             //
-//   Updated: 2016/03/02 19:56:26 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/03/04 19:20:33 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -58,8 +58,17 @@ Main::Main(void)
 	, _act(WIN_SIZEVI)
 {
 	std::ifstream	is("res/layout.xml");
+	auto	pushFun = [&, this](std::string const &fname, lua_CFunction f) {
+		// ftlua::stackdump(l);
+		_act.registerLuaCFun_table("Main", fname, f);
+	};
+	int				ret;
 
 	_act.inflate(is);
+	luaL_dostring(_act.getLuaState(), "Main = {}");
+	pushFun("getMainInstance", &Main::instanceLua);
+	pushFun("getBoardWidth", &Main::getBoardWidthLua);
+	pushFun("getBoard", &Main::getBoardLua);
 
 	std::srand(time(NULL));
 
@@ -89,13 +98,13 @@ Main::Main(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	_tiles.init(WIN_SIZEVI
-		   , /*ft::Vec2<int> const triangleSize =*/ ft::Vec2<int>(95, 95)
-		   , /*int const pointRandomRadius =*/ 30
-		   , /*float const percentGray =*/ 0.33f
-		   , /*ft::Vec3<int> const gray =*/ ft::Vec3<int>(120, 181, 129)
-		   , /*ft::Vec3<int> const pink =*/ ft::Vec3<int>(10, 150, 10)
-		   // , /*ft::Vec3<int> const pink =*/ ft::Vec3<int>(230, 46, 77)
-		   , /*ft::Vec3<int> const deltaPink =*/ ft::Vec3<int>(10, 45, 10));
+				, /*ft::Vec2<int> const triangleSize =*/ ft::Vec2<int>(95, 95)
+				, /*int const pointRandomRadius =*/ 30
+				, /*float const percentGray =*/ 0.33f
+				, /*ft::Vec3<int> const gray =*/ ft::Vec3<int>(120, 181, 129)
+				, /*ft::Vec3<int> const pink =*/ ft::Vec3<int>(10, 150, 10)
+				// , /*ft::Vec3<int> const pink =*/ ft::Vec3<int>(230, 46, 77)
+				, /*ft::Vec3<int> const deltaPink =*/ ft::Vec3<int>(10, 45, 10));
 	// , /*ft::Vec3<int> const deltaPink =*/ ft::Vec3<int>(50, 10, 77));
 	_canvasHolder.init();
 	// Bookmark::declare_libftui();
@@ -120,6 +129,7 @@ void				Main::loop(void)
 	{
 		glfwPollEvents();
 		_tiles.render();
+		_act.fireEvent("ON_BOARD_UPDATE");
 		_act.render(canvas);
 		_canvasHolder.render();
 		glfwSwapBuffers(_window);
@@ -184,7 +194,7 @@ void			Main::handleKeyEvents(
 }
 
 void			Main::handleMousePosEvents(GLFWwindow *window,
-					double x, double y)
+										   double x, double y)
 {
 	Main		*main;
 
@@ -194,7 +204,7 @@ void			Main::handleMousePosEvents(GLFWwindow *window,
 }
 
 void			Main::handleMouseScrollEvents(GLFWwindow *window,
-					double, double y)
+											  double, double y)
 {
 	Main		*main;
 
@@ -214,7 +224,7 @@ void			Main::handleMouseButtonEvents(
 	glfwGetCursorPos(window, pos + 0, pos + 1);
 	if (action == GLFW_PRESS)
 		main->onMouseDown(static_cast<int>(pos[0]), static_cast<int>(pos[1])
-							, button, mods);
+						  , button, mods);
 	else
 		main->onMouseUp(static_cast<int>(pos[0]), static_cast<int>(pos[1])
 						, button, mods);
@@ -226,7 +236,7 @@ void			Main::handleMouseButtonEvents(
 */
 
 Main			*Main::ftlua_pop(lua_State *l, int i,
-					std::function<void(std::string)> panic)
+								 std::function<void(std::string)> panic)
 {
 	Main		*v;
 	int			type;
@@ -244,6 +254,36 @@ Main			*Main::ftlua_pop(lua_State *l, int i,
 	lua_remove(l, i);
 	return v;
 }
+
+void			Main::ftlua_push(
+	lua_State *l, std::function<void(std::string)> panic)
+{
+	ftlua::pushLight(l, this);
+	return ;
+}
+
+int				Main::instanceLua(lua_State *l)
+{
+	return ftlua::handle<0, 1>(l, &Main::instance);;
+}
+
+int				Main::getBoardWidthLua(lua_State *l)
+{
+	Main *const		m = Main::instance();
+
+	ftlua::push(l, 5);
+	return 1;
+}
+
+int				Main::getBoardLua(lua_State *l)
+{
+	Main *const		m = Main::instance();
+
+	std::vector<int>	vec = {{0, 0, 0, 0, 0, 0, -1, -1, -1}};
+	ftlua::push(l, vec);
+	return 1;
+}
+
 
 
 /*
