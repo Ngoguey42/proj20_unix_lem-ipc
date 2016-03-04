@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/11/07 12:58:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/03/04 19:17:04 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/03/04 19:45:51 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,6 +20,8 @@ extern "C"
 #  undef T
 # endif
 }
+
+# include <vector>
 
 # include "gl/gl.hpp"
 # include "gl_canvas/GlCanvasHolder.hpp"
@@ -67,16 +69,20 @@ public:
 	void					ftlua_push(
 		lua_State *l, std::function<void(std::string)> panic);
 
-	static int				instanceLua(lua_State *l);
+	// static int				instanceLua(lua_State *l);
+	int						getBoardWidth(void) const;
 	static int				getBoardWidthLua(lua_State *l);
-	static int				getBoardLua(lua_State *l);
 
+	std::vector<int> const	&getBoard(void) const;
+	static int				getBoardLua(lua_State *l);
 
 private:
 	GLFWwindow									*_window;
 	gl::GlCanvasHolder							_canvasHolder;
 	Tiles										_tiles;
 	ftui::Activity								_act;
+	int											_boardWidth;
+	std::vector<int>							_board;
 };
 
 #endif

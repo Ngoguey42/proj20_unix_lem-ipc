@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/11/07 10:15:01 by ngoguey           #+#    #+#             //
-//   Updated: 2016/03/04 19:20:33 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/03/04 19:57:07 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -17,7 +17,6 @@
 #include "ft/utils.hpp"
 #include "ftui/AView.hpp"
 
-// #include "libftui_extend/Bookmark.hpp"
 #include "Main.hpp"
 #include "config_window.hpp"
 
@@ -56,21 +55,23 @@ Main::Main(void)
 	, _canvasHolder(WIN_WIDTHI, WIN_HEIGHTI)
 	, _tiles()
 	, _act(WIN_SIZEVI)
+	, _boardWidth(4)
+	, _board(_boardWidth * _boardWidth, -1)
 {
 	std::ifstream	is("res/layout.xml");
 	auto	pushFun = [&, this](std::string const &fname, lua_CFunction f) {
-		// ftlua::stackdump(l);
 		_act.registerLuaCFun_table("Main", fname, f);
 	};
-	int				ret;
-
-	_act.inflate(is);
-	luaL_dostring(_act.getLuaState(), "Main = {}");
-	pushFun("getMainInstance", &Main::instanceLua);
-	pushFun("getBoardWidth", &Main::getBoardWidthLua);
-	pushFun("getBoard", &Main::getBoardLua);
+	lua_State		*l;
 
 	std::srand(time(NULL));
+
+	_act.inflate(is);
+	l = _act.getLuaState();
+	luaL_dostring(l, "Main = {}");
+	ftlua::set(l, ftlua::makeKeys("Main"), 0, (void*)this);
+	pushFun("getBoardWidth", &Main::getBoardWidthLua);
+	pushFun("getBoard", &Main::getBoardLua);
 
 	if (glfwInit() != GL_TRUE)
 		throw std::runtime_error("Cannot load GLFW");
@@ -107,7 +108,9 @@ Main::Main(void)
 				, /*ft::Vec3<int> const deltaPink =*/ ft::Vec3<int>(10, 45, 10));
 	// , /*ft::Vec3<int> const deltaPink =*/ ft::Vec3<int>(50, 10, 77));
 	_canvasHolder.init();
-	// Bookmark::declare_libftui();
+
+	_board[5] = 42; //TODO: debug
+
 }
 
 Main::~Main(void)
@@ -136,7 +139,6 @@ void				Main::loop(void)
 	}
 }
 
-
 /*
 ** ************************************************************************** **
 ** GLFW INTERACTIONS
@@ -153,11 +155,11 @@ void			Main::onKeyUp(int key, int scancode, int mods)
 
 void			Main::onKeyDown(int key, int scancode, int mods)
 {
-	ftui::Activity &act = _act;
 	lua_State		*l = _act.getLuaState();
 
 	_act.onKeyDown(key, mods);
 	(void)scancode;
+	(void)l;
 }
 
 void			Main::onMouseMove(int x, int y)
@@ -256,35 +258,31 @@ Main			*Main::ftlua_pop(lua_State *l, int i,
 }
 
 void			Main::ftlua_push(
-	lua_State *l, std::function<void(std::string)> panic)
+	lua_State *l, std::function<void(std::string)>)
 {
 	ftlua::pushLight(l, this);
 	return ;
 }
 
-int				Main::instanceLua(lua_State *l)
+int				Main::getBoardWidth(void) const
 {
-	return ftlua::handle<0, 1>(l, &Main::instance);;
+	return this->_boardWidth;
 }
 
 int				Main::getBoardWidthLua(lua_State *l)
 {
-	Main *const		m = Main::instance();
+	return ftlua::handle<1, 1>(l, &Main::getBoardWidth);
+}
 
-	ftlua::push(l, 5);
-	return 1;
+std::vector<int> const	&Main::getBoard(void) const
+{
+	return this->_board;
 }
 
 int				Main::getBoardLua(lua_State *l)
 {
-	Main *const		m = Main::instance();
-
-	std::vector<int>	vec = {{0, 0, 0, 0, 0, 0, -1, -1, -1}};
-	ftlua::push(l, vec);
-	return 1;
+	return ftlua::handle<1, 1>(l, &Main::getBoard);
 }
-
-
 
 /*
 ** ========================================================================== **
@@ -302,7 +300,7 @@ int				main(void)
 	}
 	catch (std::exception const &e)
 	{
-		std::cout << "lol: " << e.what() << std::endl;
+		std::cout << "Exception:\n" << e.what() << std::endl;
 	}
 	return (0);
 }
