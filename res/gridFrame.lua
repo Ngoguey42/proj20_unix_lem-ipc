@@ -6,7 +6,7 @@
 --   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        --
 --                                                +#+#+#+#+#+   +#+           --
 --   Created: 2016/03/02 19:57:41 by ngoguey           #+#    #+#             --
---   Updated: 2016/03/04 19:56:56 by ngoguey          ###   ########.fr       --
+--   Updated: 2016/03/04 20:22:17 by ngoguey          ###   ########.fr       --
 --                                                                            --
 -- ************************************************************************** --
 
@@ -60,18 +60,17 @@ function f_frame:onDraw(canvas)
   end
 
   local board = Main:getBoard()
+  local status = Main:getGameStatus()
 
   local last = f_w - 1
   local tile_w = (f_wpx - INSETS * 2 - SPACING * last) / f_w
-  local realNbr
 
   local dt = tile_w + SPACING
   local ypx = INSETS
   local xpx = 0.
   local i = 0
 
-  ft.ptab(board);
-  print(arrayLength(board));
+  -- ft.ptab(board);
   assert(arrayLength(board) == f_w * f_w);
 
   for y = 0, last do

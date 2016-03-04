@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/11/07 10:15:01 by ngoguey           #+#    #+#             //
-//   Updated: 2016/03/04 19:57:07 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/03/04 20:22:45 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -20,21 +20,6 @@
 #include "Main.hpp"
 #include "config_window.hpp"
 
-/*
-** ************************************************************************** **
-** CONSTRUCTION
-*/
-
-Main			*Main::instance(void)
-{
-	static Main		*m = nullptr;
-
-	if (m == nullptr)
-	{
-		m = new Main();
-	}
-	return m;
-}
 
 #ifdef MAC_OS_MODE
 # define INIT_GLEW			true
@@ -50,6 +35,20 @@ Main			*Main::instance(void)
 # define HINT_DOUBLE_BUFFER	false
 #endif
 
+/*
+** ************************************************************************** **
+** CONSTRUCTION
+*/
+
+Main			*Main::instance(void)
+{
+	static Main		*m = nullptr;
+
+	if (m == nullptr)
+		m = new Main();
+	return m;
+}
+
 Main::Main(void)
 	: _window(nullptr)
 	, _canvasHolder(WIN_WIDTHI, WIN_HEIGHTI)
@@ -57,11 +56,13 @@ Main::Main(void)
 	, _act(WIN_SIZEVI)
 	, _boardWidth(4)
 	, _board(_boardWidth * _boardWidth, -1)
+	, _gameStatus("Initialization")
 {
-	std::ifstream	is("res/layout.xml");
-	auto	pushFun = [&, this](std::string const &fname, lua_CFunction f) {
+	auto			pushFun =
+		[&, this](std::string const &fname, lua_CFunction f) {
 		_act.registerLuaCFun_table("Main", fname, f);
 	};
+	std::ifstream	is("res/layout.xml");
 	lua_State		*l;
 
 	std::srand(time(NULL));
@@ -72,6 +73,7 @@ Main::Main(void)
 	ftlua::set(l, ftlua::makeKeys("Main"), 0, (void*)this);
 	pushFun("getBoardWidth", &Main::getBoardWidthLua);
 	pushFun("getBoard", &Main::getBoardLua);
+	pushFun("getGameStatus", &Main::getGameStatusLua);
 
 	if (glfwInit() != GL_TRUE)
 		throw std::runtime_error("Cannot load GLFW");
@@ -83,8 +85,8 @@ Main::Main(void)
 		glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, OPENGL_PROFILE);
-	if ((_window = glfwCreateWindow(WIN_WIDTHI, WIN_HEIGHTI, "npuzzle"
-									, NULL, NULL)) == NULL)
+	if ((_window = glfwCreateWindow(
+			 WIN_WIDTHI, WIN_HEIGHTI, "npuzzle", NULL, NULL)) == NULL)
 		throw std::runtime_error("Cannot create GLFW window");
 	glfwMakeContextCurrent(_window);
 	if (!INIT_GLEW)
@@ -99,24 +101,22 @@ Main::Main(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	_tiles.init(WIN_SIZEVI
-				, /*ft::Vec2<int> const triangleSize =*/ ft::Vec2<int>(95, 95)
-				, /*int const pointRandomRadius =*/ 30
-				, /*float const percentGray =*/ 0.33f
-				, /*ft::Vec3<int> const gray =*/ ft::Vec3<int>(120, 181, 129)
-				, /*ft::Vec3<int> const pink =*/ ft::Vec3<int>(10, 150, 10)
-				// , /*ft::Vec3<int> const pink =*/ ft::Vec3<int>(230, 46, 77)
-				, /*ft::Vec3<int> const deltaPink =*/ ft::Vec3<int>(10, 45, 10));
-	// , /*ft::Vec3<int> const deltaPink =*/ ft::Vec3<int>(50, 10, 77));
+				, ft::Vec2<int>(95, 95), 30, 0.33f
+				, ft::Vec3<int>(120, 181, 129)
+				, ft::Vec3<int>(10, 150, 10)
+				, ft::Vec3<int>(10, 45, 10)
+		);
 	_canvasHolder.init();
 
 	_board[5] = 42; //TODO: debug
-
+	return ;
 }
 
 Main::~Main(void)
 {
 	glfwDestroyWindow(_window);
 	glfwTerminate();
+	return ;
 }
 
 /*
@@ -137,6 +137,7 @@ void				Main::loop(void)
 		_canvasHolder.render();
 		glfwSwapBuffers(_window);
 	}
+	return ;
 }
 
 /*
@@ -151,6 +152,7 @@ void			Main::onKeyUp(int key, int scancode, int mods)
 	else
 		_act.onKeyUp(key, mods);
 	(void)scancode;
+	return ;
 }
 
 void			Main::onKeyDown(int key, int scancode, int mods)
@@ -160,26 +162,31 @@ void			Main::onKeyDown(int key, int scancode, int mods)
 	_act.onKeyDown(key, mods);
 	(void)scancode;
 	(void)l;
+	return ;
 }
 
 void			Main::onMouseMove(int x, int y)
 {
 	_act.onMouseMove(x, y);
+	return ;
 }
 
 void			Main::onMouseScroll(float delta)
 {
 	_act.onMouseScroll(delta);
+	return ;
 }
 
 void			Main::onMouseUp(int x, int y, int button, int mods)
 {
 	_act.onMouseUp(x, y, button, mods);
+	return ;
 }
 
 void			Main::onMouseDown(int x, int y, int button, int mods)
 {
 	_act.onMouseDown(x, y, button, mods);
+	return ;
 }
 
 void			Main::handleKeyEvents(
@@ -193,6 +200,7 @@ void			Main::handleKeyEvents(
 		main->onKeyUp(key, scancode, mods);
 	else if (action == GLFW_PRESS)
 		main->onKeyDown(key, scancode, mods);
+	return ;
 }
 
 void			Main::handleMousePosEvents(GLFWwindow *window,
@@ -203,6 +211,7 @@ void			Main::handleMousePosEvents(GLFWwindow *window,
 	main = reinterpret_cast<Main*>(glfwGetWindowUserPointer(window));
 	FTASSERT(main != NULL);
 	main->onMouseMove(x, y);
+	return ;
 }
 
 void			Main::handleMouseScrollEvents(GLFWwindow *window,
@@ -213,6 +222,7 @@ void			Main::handleMouseScrollEvents(GLFWwindow *window,
 	main = reinterpret_cast<Main*>(glfwGetWindowUserPointer(window));
 	FTASSERT(main != NULL);
 	main->onMouseScroll(y);
+	return ;
 }
 
 void			Main::handleMouseButtonEvents(
@@ -230,6 +240,7 @@ void			Main::handleMouseButtonEvents(
 	else
 		main->onMouseUp(static_cast<int>(pos[0]), static_cast<int>(pos[1])
 						, button, mods);
+	return ;
 }
 
 /*
@@ -237,8 +248,8 @@ void			Main::handleMouseButtonEvents(
 ** LIBFTUI INTERACTIONS
 */
 
-Main			*Main::ftlua_pop(lua_State *l, int i,
-								 std::function<void(std::string)> panic)
+Main			*Main::ftlua_pop(
+	lua_State *l, int i, std::function<void(std::string)> panic)
 {
 	Main		*v;
 	int			type;
@@ -283,6 +294,46 @@ int				Main::getBoardLua(lua_State *l)
 {
 	return ftlua::handle<1, 1>(l, &Main::getBoard);
 }
+
+std::string const	&Main::getGameStatus(void) const
+{
+	return this->_gameStatus;
+}
+
+int				Main::getGameStatusLua(lua_State *l)
+{
+	return ftlua::handle<1, 1>(l, &Main::getGameStatus);
+}
+
+/*
+** ************************************************************************** **
+** IPCs INTERACTIONS
+*/
+
+void			Main::fetchBoard(void)
+{
+	// Game can be fully reloaded between 2 fetchBoard()
+	// There is no case for exit or raise in fetchBoard
+	// have a fallback configuration for _board and _boardWidth
+	// handle signals to clean properly
+	// display game status on window
+
+	// once:
+	// 	generate keys						(May raise)
+
+	// each fetch (refresh rate?):
+	// 	retrieve sem_reslife				(No raise)
+	// 	lock sem_reslife					(No raise, handle SIGINT)
+	// 	retrieve shm_gameinfo				(No raise)
+	// 	ON_BOARD_SIZE_UPDATE if necessary
+	// 	retrieve shm_board					(No raise)
+	// 	ON_BOARD_UPDATE if necessary
+
+	// unmap / release all					(No raise)
+
+	return ;
+}
+
 
 /*
 ** ========================================================================== **

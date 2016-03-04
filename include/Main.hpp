@@ -6,7 +6,7 @@
 //   By: ngoguey <ngoguey@student.42.fr>            +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/11/07 12:58:38 by ngoguey           #+#    #+#             //
-//   Updated: 2016/03/04 19:45:51 by ngoguey          ###   ########.fr       //
+//   Updated: 2016/03/04 20:21:24 by ngoguey          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -63,26 +63,31 @@ public:
 
 	/* LIBFTUI INTERACTIONS ********* */
 	typedef std::integral_constant<unsigned int, 1> ftlua_size;
-	//TODO: Push application's classes too
-	static Main				*ftlua_pop(lua_State *l, int i,
-								std::function<void(std::string)> panic);
+	static Main				*ftlua_pop(
+		lua_State *l, int i, std::function<void(std::string)> panic);
 	void					ftlua_push(
 		lua_State *l, std::function<void(std::string)> panic);
 
-	// static int				instanceLua(lua_State *l);
 	int						getBoardWidth(void) const;
 	static int				getBoardWidthLua(lua_State *l);
 
 	std::vector<int> const	&getBoard(void) const;
 	static int				getBoardLua(lua_State *l);
 
+	std::string const		&getGameStatus(void) const;
+	static int				getGameStatusLua(lua_State *l);
+
+	/* IPCS INTERACTIONS ************ */
+	void					fetchBoard(void);
+
 private:
-	GLFWwindow									*_window;
-	gl::GlCanvasHolder							_canvasHolder;
-	Tiles										_tiles;
-	ftui::Activity								_act;
-	int											_boardWidth;
-	std::vector<int>							_board;
+	GLFWwindow				*_window;
+	gl::GlCanvasHolder		_canvasHolder;
+	Tiles					_tiles;
+	ftui::Activity			_act;
+	int						_boardWidth;
+	std::vector<int>		_board;
+	std::string				_gameStatus;
 };
 
 #endif
